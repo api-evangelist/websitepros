@@ -1,8 +1,27 @@
 aid: websitepros
+accessModel:
+  pricing: unknown
+  onboarding: unknown
+  trial: false
+  try_now: false
+  public: false
+  label: Unknown
+  confidence: low
+  source: []
+  generated: '2026-07-22'
+  method: derived
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/websitepros.png
 name: WebsitePros
-description: WebsitePros is a company surfaced as a portfolio company of insight-partners and added to
-  the API Evangelist network as a stub for enrichment. This profile is a lead awaiting the enrichment
-  pipeline.
+description: >-
+  WebsitePros, now operating as Web.com, is an American company that provides
+  website building, web hosting, domain registration, e-commerce, and online
+  marketing services primarily to small and medium-sized businesses. Website
+  Pros, Inc. merged with Web.com in 2007 and adopted the Web.com name. The
+  business offers do-it-yourself and do-it-for-you website builders, managed
+  WordPress hosting, professional email, SEO and digital marketing tools, and is
+  headquartered in Jacksonville, Florida. As surfaced through a VC-portfolio
+  match, it currently exposes no public developer API or documented developer
+  portal.
 url: https://raw.githubusercontent.com/api-evangelist/websitepros/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
@@ -12,9 +31,15 @@ x-tier: stub
 x-tier-reason: portfolio-lead
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-21'
 tags:
 - Company
+- Website Builder
+- Web Hosting
+- Domains
+- Small Business
+- Digital Marketing
+- E-Commerce
 apis: []
 maintainers:
 - FN: Kin Lane
@@ -22,5 +47,12 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: DomainSecurity
+  url: security/websitepros-domain-security.yml
 - type: Website
-  url: http://www.web.com/
+  url: https://www.web.com/
+x-enrichment:
+  date: '2026-07-21'
+  status: minimal
+  artifacts_added: 1
+  pass: local-v1
