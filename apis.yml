@@ -1,37 +1,46 @@
 aid: websitepros
 accessModel:
   pricing: unknown
-  onboarding: unknown
+  onboarding: request-access
   trial: false
   try_now: false
   public: false
-  label: Unknown
-  confidence: low
-  source: []
-  generated: '2026-07-22'
-  method: derived
+  label: Request Access
+  confidence: high
+  source:
+  - https://api-docs.intl.web.com/
+  - https://nts.developer.azure-api.net
+  generated: '2026-08-13'
+  method: searched
+  note: >-
+    The Web.com International Platform API is real and publicly documented, but access is granted
+    only after the Web.com International team manually reviews a developer-portal registration, per
+    environment. No pricing, quota or tier is published for it.
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/websitepros.png
 name: WebsitePros
 description: >-
-  WebsitePros, now operating as Web.com, is an American company that provides
-  website building, web hosting, domain registration, e-commerce, and online
-  marketing services primarily to small and medium-sized businesses. Website
-  Pros, Inc. merged with Web.com in 2007 and adopted the Web.com name. The
-  business offers do-it-yourself and do-it-for-you website builders, managed
-  WordPress hosting, professional email, SEO and digital marketing tools, and is
-  headquartered in Jacksonville, Florida. As surfaced through a VC-portfolio
-  match, it currently exposes no public developer API or documented developer
-  portal.
+  WebsitePros, now operating as Web.com, is an American company that provides website building, web
+  hosting, domain registration, e-commerce, and online marketing services primarily to small and
+  medium-sized businesses. Website Pros, Inc. merged with Web.com in 2007 and adopted the Web.com
+  name, and the business is now part of Newfold Digital, formed in 2021 from Endurance Web Presence
+  and Web.com Group. It offers do-it-yourself and do-it-for-you website builders, managed WordPress
+  hosting, professional email, SEO and digital marketing tools, and is headquartered in
+  Jacksonville, Florida. Behind the retail brand it runs a real partner-facing B2B API — the Web.com
+  International ("NTS") Platform API, fronted by Azure API Management at api.nts.web.com and
+  documented publicly at api-docs.intl.web.com — through which approved resellers and sales partners
+  create and manage sales orders, provision service orders, check domain availability and mint
+  customer single-sign-on URLs. Access is not self-service: registration is reviewed and approved by
+  the Web.com International team, separately for the production and development environments.
 url: https://raw.githubusercontent.com/api-evangelist/websitepros/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
 x-backed-by:
 - insight-partners
-x-tier: stub
-x-tier-reason: portfolio-lead
+x-tier: profiled
+x-tier-reason: published-api-documentation
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-21'
+modified: '2026-08-13'
 tags:
 - Company
 - Website Builder
@@ -40,7 +49,62 @@ tags:
 - Small Business
 - Digital Marketing
 - E-Commerce
-apis: []
+- Reseller
+- Sales Orders
+- Provisioning
+- Single Sign-On
+- Azure API Management
+apis:
+- aid: websitepros:international-platform
+  name: Web.com International Platform API
+  description: >-
+    The partner-facing API for Web.com's International ("NTS") platform, fronted by Azure API
+    Management. Ten documented operations cover the sales-order lifecycle (create, list with paging
+    and filtering, read, merge-update, delete), service-order provisioning of products and their
+    product-specific service configurations, domain availability checking and name suggestion, a
+    customer single-sign-on URL generator, and a healthcheck. Every request carries three
+    credentials together — an Azure API Management subscription key, a Microsoft Entra ID
+    client-credentials bearer token, and a tenant identifier. Production and development are
+    separate gateways with separate registrations and separate keys. Web.com publishes no OpenAPI;
+    its published machine-readable contract is the public Postman collection saved verbatim in this
+    repository.
+  humanURL: https://api-docs.intl.web.com/
+  baseURL: https://api.nts.web.com
+  tags:
+  - Sales Orders
+  - Provisioning
+  - Domains
+  - Single Sign-On
+  - Reseller
+  properties:
+  - type: OpenAPI
+    url: openapi/websitepros-international-platform-openapi-derived.yml
+    name: OpenAPI 3.1 derived by API Evangelist — not published by Web.com
+  - type: PostmanCollection
+    url: collections/websitepros-international-platform.postman_collection.json
+    name: International Platform Documentation — published by Web.com, saved verbatim
+  - type: Overlay
+    url: overlays/websitepros-international-platform-overlay.yaml
+  - type: Documentation
+    url: https://api-docs.intl.web.com/
+  - type: APIReference
+    url: https://api-docs.intl.web.com/
+  - type: GettingStarted
+    url: https://api-docs.intl.web.com/#getting-started
+  - type: DeveloperPortal
+    url: https://nts.developer.azure-api.net
+  - type: SignUp
+    url: https://nts.developer.azure-api.net/signup
+  - type: Authentication
+    url: authentication/websitepros-authentication.yml
+  - type: ErrorCatalog
+    url: errors/websitepros-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/websitepros-rate-limits.yml
+  - type: Plans
+    url: plans/websitepros-plans-pricing.yml
+  - type: Sandbox
+    url: sandbox/websitepros-sandbox.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -51,8 +115,104 @@ common:
   url: security/websitepros-domain-security.yml
 - type: Website
   url: https://www.web.com/
+- type: DeveloperPortal
+  url: https://nts.developer.azure-api.net
+- type: Documentation
+  url: https://api-docs.intl.web.com/
+- type: APIReference
+  url: https://api-docs.intl.web.com/
+- type: GettingStarted
+  url: https://api-docs.intl.web.com/#getting-started
+- type: SignUp
+  url: https://nts.developer.azure-api.net/signup
+- type: Postman
+  url: https://api-docs.intl.web.com/
+- type: PostmanCollection
+  url: collections/websitepros-international-platform.postman_collection.json
+- type: Authentication
+  url: authentication/websitepros-authentication.yml
+- type: Conventions
+  url: conventions/websitepros-conventions.yml
+- type: ErrorCatalog
+  url: errors/websitepros-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/websitepros-lifecycle.yml
+- type: Conformance
+  url: conformance/websitepros-conformance.yml
+- type: DataModel
+  url: data-model/websitepros-data-model.yml
+- type: Sandbox
+  url: sandbox/websitepros-sandbox.yml
+- type: Plans
+  url: plans/websitepros-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/websitepros-rate-limits.yml
+- type: Packages
+  url: packages/websitepros-packages.yml
+- type: MCPServer
+  url: mcp/websitepros-mcp.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: LLMsTxt
+  url: llms/websitepros-llms.txt
+- type: Overlay
+  url: overlays/websitepros-international-platform-overlay.yaml
+x-pointer-notes:
+  omitted_deliberately:
+    WellKnown: >-
+      Every /.well-known/ path 404d on all five reachable Web.com hosts (403 behind a Cloudflare bot
+      challenge on www.web.com). See well-known/websitepros-well-known.yml — a recorded absence, not
+      a served surface.
+    SecurityTxt: No security.txt is served on any Web.com host.
+    AgentCard: >-
+      /.well-known/agent-card.json and /.well-known/agent.json missed on every host. Nothing was
+      authored; there is no a2a/ directory.
+    Idempotency: >-
+      Web.com publishes no Idempotency-Key support and no retry-safety statement. conventions/
+      records the absence explicitly.
+    SDKs: No first-party client library exists in any registry searched.
+    OAuthScopes: >-
+      The oauth2 scheme is real (Entra ID client credentials) but has ZERO scopes — the v1 token
+      endpoint takes a `resource` audience instead. An empty scopes artifact was generated and then
+      removed rather than published as a scope surface; authentication/ carries the model.
+    StatusPage: >-
+      status.web.com resolves but returned 403 behind a Cloudflare bot challenge, and no status page
+      is linked from the API documentation. Presence could not be verified.
+    Deprecation: No deprecation or sunset policy is published for this API.
+    Compliance: No trust center or named certification could be verified.
+    Security: >-
+      No security.txt, disclosure policy or bug-bounty program was found on any reachable Web.com
+      host.
+    ChangeLog: No dated changelog or release notes exist for this API.
+    CLI: No first-party CLI.
+    AsyncAPI/Webhooks: No event, webhook, callback or streaming surface is documented.
+    GitHubOrganization: >-
+      github.com/webdotcom belongs to an unrelated company ("Web dot Com Website Development
+      Philippines Inc.", 0 repos); github.com/newfold-digital is 404.
+    Pricing/TermsOfService/PrivacyPolicy: >-
+      These pages live on www.web.com, which answers HTTP 403 to every anonymous request behind a
+      Cloudflare bot challenge. Not asserted without verification.
 x-enrichment:
-  date: '2026-07-21'
-  status: minimal
-  artifacts_added: 1
+  date: '2026-08-13'
+  status: enriched
+  artifacts_added: 19
   pass: local-v1
+x-coverage:
+  state: covered
+  reason: covered
+  detail: >-
+    The API surface was fully reachable and profiled — Web.com's published Postman collection at
+    api-docs.intl.web.com was harvested verbatim and every documented route was probed live on
+    api.nts.web.com — but the www.web.com marketing host answers HTTP 403 to every anonymous request
+    behind a Cloudflare bot challenge (cf-mitigated: challenge), so retail pricing, terms, privacy
+    and status pages could not be read and are deliberately not asserted.
+  evidence:
+  - url: https://api-docs.intl.web.com/
+    status: 200
+  - url: https://api.nts.web.com/sales-orders/v1
+    status: 401
+  - url: https://nts.developer.azure-api.net/developer/apis?api-version=2022-04-01-preview
+    status: 200
+  - url: https://www.web.com/
+    status: 403
+  checked: '2026-08-13'
