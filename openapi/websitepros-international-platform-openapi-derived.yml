@@ -1,0 +1,667 @@
+openapi: 3.1.0
+info:
+  title: Web.com International Platform API
+  version: '2026-08-13'
+  summary: >-
+    Derived OpenAPI 3.1 description of the Web.com International ("NTS") Platform API fronted by
+    Azure API Management at https://api.nts.web.com.
+  description: >-
+    DERIVED, NOT HARVESTED. Web.com publishes NO OpenAPI for this API. The only machine-readable
+    contract Web.com publishes for it is a public Postman collection, served from its own domain at
+    https://api-docs.intl.web.com/ ("International Platform Documentation", collection id
+    49385bb1-0783-41dd-bc38-a7b9b2ace81d), saved verbatim in this repository at
+    collections/websitepros-international-platform.postman_collection.json.
+
+
+    Every path, method, header, query parameter and request example below is taken literally from
+    that published collection, or from an HTTP response observed live against api.nts.web.com on
+    2026-08-13 and recorded in x-evidence. No response schema is invented: the only response bodies
+    described here are the Azure API Management error envelopes that were actually returned on
+    anonymous probes. Success (2xx) bodies are described by status and content type only, because
+    Web.com does not publish them and the live surface is gated behind a subscription key that is
+    granted only after a manual access review.
+
+
+    OWNERSHIP. This contract belongs to Web.com. The documentation is served from api-docs.intl.web.com
+    (a web.com subdomain), the production and development gateways are api.nts.web.com and
+    api-dev.nts.web.com (web.com subdomains), the developer portal at ntsdev.developer.azure-api.net
+    is titled "Web.com International API", the OAuth2 audience is api://intl.web.com, and the
+    published getting-started text says access is "granted upon final review by the Web.com
+    International team".
+
+
+    ACCESS. Two separate environments, each requiring its own registration and approval:
+    production (portal https://nts.developer.azure-api.net, gateway https://api.nts.web.com) and
+    development (portal https://ntsdev.developer.azure-api.net, gateway https://api-dev.nts.web.com).
+    Every request carries an Azure API Management subscription key in Ocp-Apim-Subscription-Key, a
+    bearer token obtained by client-credentials from the Web.com Microsoft Entra ID tenant, and a
+    tenant identifier — x-nts-tenant-id on the sales-order operations, tenant-name on the domain,
+    SSO and service-order operations.
+  contact:
+    name: Web.com International Platform Documentation
+    url: https://api-docs.intl.web.com/
+  x-derived-by: API Evangelist
+  x-derived-from:
+    - https://api-docs.intl.web.com/
+    - collections/websitepros-international-platform.postman_collection.json
+  x-evidence:
+    fetched: '2026-08-13'
+    documentation_url: https://api-docs.intl.web.com/
+    documentation_status: 200
+    collection_url: https://api-docs.intl.web.com/api/collections/321243/T1DwdZvr?segregateAuth=true&versionTag=latest
+    collection_status: 200
+    gateway_probe: https://api.nts.web.com/sales-orders/v1
+    gateway_status: 401
+    gateway_www_authenticate: >-
+      AzureApiManagementKey realm="https://api.nts.web.com/sales-orders",name="Ocp-Apim-Subscription-Key",type="header"
+servers:
+  - url: https://api.nts.web.com
+    description: Production gateway (Azure API Management, nts.azure-api.net)
+  - url: https://api-dev.nts.web.com
+    description: Development gateway; separate registration and separate subscription key required
+tags:
+  - name: Health
+    description: Gateway and service liveness.
+  - name: Domains
+    description: Domain-name availability and suggestion.
+  - name: Sales Orders
+    description: Create, read, update and delete sales orders in the Web.com International pipeline.
+  - name: Service Orders
+    description: Provision products and services against a customer and account.
+  - name: SSO
+    description: Generate a single-sign-on URL for a customer owned by your tenant.
+paths:
+  /healthcheck:
+    get:
+      tags: [Health]
+      operationId: getHealthcheck
+      summary: Healthcheck
+      description: >-
+        Sends a healthcheck request to see if the sales order api is currently running. This is a
+        simple request that just verifies that the api is up. It does not verify that all dependant
+        systems are reachable. (Description verbatim from the published Postman collection.)
+      security:
+        - subscriptionKey: []
+      x-evidence:
+        probed: '2026-08-13'
+        production: {url: 'https://api.nts.web.com/healthcheck', status: 404}
+        development: {url: 'https://api-dev.nts.web.com/healthcheck', status: 401}
+        note: >-
+          Documented for both environments, but only the development gateway answered with an
+          authentication challenge; the production gateway returned the Azure API Management
+          "Resource not found" envelope, so the route may not be published on production.
+      responses:
+        '200':
+          description: The API is running. Web.com does not publish the response body.
+        '401':
+          $ref: '#/components/responses/AccessDenied'
+        '404':
+          $ref: '#/components/responses/ResourceNotFound'
+  /api/domain/check/{domain}:
+    get:
+      tags: [Domains]
+      operationId: checkDomainAvailability
+      summary: Check
+      description: Check to see if a domain name is available for registration.
+      parameters:
+        - name: domain
+          in: path
+          required: true
+          description: The fully qualified domain name to test, e.g. test.com.
+          schema: {type: string}
+          example: test.com
+      security:
+        - subscriptionKey: []
+          bearerAuth: []
+          tenantName: []
+      x-evidence:
+        probed: '2026-08-13'
+        url: https://api.nts.web.com/api/domain/check/test.com
+        status: 401
+        www_authenticate: >-
+          AzureApiManagementKey realm="https://api.nts.web.com/api/domain",name="Ocp-Apim-Subscription-Key",type="header"
+      responses:
+        '200':
+          description: Availability result. Web.com does not publish the response body.
+        '401':
+          $ref: '#/components/responses/AccessDenied'
+  /api/domain/spin:
+    post:
+      tags: [Domains]
+      operationId: spinDomainSuggestions
+      summary: Spin
+      description: Get a list of available domain names given partial words.
+      security:
+        - subscriptionKey: []
+          bearerAuth: []
+          tenantName: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DomainSpinRequest'
+            example:
+              subdomain: test
+              extensions: [com, net, org]
+      x-evidence:
+        probed: '2026-08-13'
+        url: https://api.nts.web.com/api/domain/spin
+        status: 404
+        note: >-
+          Anonymous GET/POST to the exact documented path returned the Azure API Management
+          "Resource not found" envelope rather than a 401 challenge; the sibling
+          /api/domain/check route on the same product did challenge with 401.
+      responses:
+        '200':
+          description: Suggested available domain names. Web.com does not publish the response body.
+        '401':
+          $ref: '#/components/responses/AccessDenied'
+  /sales-orders/v1:
+    get:
+      tags: [Sales Orders]
+      operationId: listSalesOrders
+      summary: List sales orders
+      description: >-
+        Paged list of sales orders. The published collection demonstrates four filters over the same
+        operation — by pipeline phase, by unprocessed state, by sales partner, by sales rep and by
+        account name — all expressed through the same `criteria` and `processed` query parameters.
+      parameters:
+        - {name: page, in: query, required: false, description: 1-based page number., schema: {type: integer, minimum: 1}, example: 1}
+        - {name: pageSize, in: query, required: false, description: Records per page., schema: {type: integer}, example: 10}
+        - name: sortBy
+          in: query
+          required: false
+          description: >-
+            Field to sort by. A leading `-` reverses the sort, e.g. `-createdOnUtc`
+            (both forms appear in the published collection).
+          schema: {type: string}
+          example: createdOnUtc
+        - {name: processed, in: query, required: false, description: Filter on whether the sales order has been processed., schema: {type: boolean}, example: false}
+        - name: criteria
+          in: query
+          required: false
+          description: >-
+            Free-text filter value. The published collection uses it for sales partner
+            ("Web.com - UK"), sales rep and account name.
+          schema: {type: string}
+        - {name: traceId, in: query, required: false, description: Caller-supplied correlation identifier echoed through the request., schema: {type: string}}
+      security:
+        - subscriptionKey: []
+          bearerAuth: []
+          tenantId: []
+      x-evidence:
+        probed: '2026-08-13'
+        url: https://api.nts.web.com/sales-orders/v1
+        status: 401
+      responses:
+        '200':
+          description: A page of sales orders. Web.com does not publish the response body.
+        '401':
+          $ref: '#/components/responses/AccessDenied'
+    post:
+      tags: [Sales Orders]
+      operationId: createSalesOrder
+      summary: Create a sales order
+      description: >-
+        When you are creating a sales order for a new customer you must provide all of the customer
+        and account details. When you are creating a sales order for an existing customer you can
+        just provide the customer id. You still have the option of placing the products on a new or
+        existing Account. The published collection also demonstrates creating a sales order with an
+        empty `products` array.
+      security:
+        - subscriptionKey: []
+          bearerAuth: []
+          tenantId: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SalesOrderEnvelope'
+            example:
+              traceId: abc123
+              salesOrder:
+                account: {id: '', name: My Blog}
+                contacts:
+                  - address1: 123 Any Street
+                    address2: ''
+                    city: Atlanta
+                    countryCode: US
+                    email: wes@example.com
+                    firstName: Wes
+                    languageCode: en
+                    lastName: Shaddix
+                    phoneNumber: '+44.1253354576'
+                    postalCode: FY1 2RP
+                    stateOrProvince: Lancashire
+                    isInvoiceRecipient: false
+                    roles: [Owner, Marketing, Finance, Legal, Accounting, General Manager]
+                customer:
+                  address1: 123 Any Street
+                  address2: ''
+                  city: Atlanta
+                  countryCode: US
+                  email: wes@example.com
+                  firstName: Wes
+                  languageCode: en
+                  lastName: Shaddix
+                  phoneNumber: '+44.1253354576'
+                  postalCode: FY1 2RP
+                  stateOrProvince: Lancashire
+                  id: ''
+                  username: wshaddix
+                  companyName: Web.com
+                  customerType: Person
+                  legalId: ABC1234
+                notes:
+                  - {body: This is a sample note, createdByUsername: WShaddix}
+                paymentSummary:
+                  currencyCode: usd
+                  invoiceDeliveryMethod: email
+                  paymentTerms: 50% setup fee + 3 monthly payments
+                  paymentType: debit card
+                products:
+                  - autoRenewServiceAgreement: false
+                    discountPercent: 0
+                    name: Trial Website
+                    quantity: 1
+                    serviceAgreementLength: 12
+                    serviceAgreementUnit: Month
+                status:
+                  pipelinePhase: Sales Lead
+                  salesPartner: Web.com - UK
+                  salesRep: Wes Shaddix
+      x-evidence:
+        probed: '2026-08-13'
+        url: https://api.nts.web.com/sales-orders/v1
+        status: 401
+      responses:
+        '201':
+          description: The sales order was created. Web.com does not publish the response body.
+        '401':
+          $ref: '#/components/responses/AccessDenied'
+  /sales-orders/v1/{salesOrderId}:
+    parameters:
+      - name: salesOrderId
+        in: path
+        required: true
+        description: The identifier of the sales order.
+        schema: {type: string}
+    get:
+      tags: [Sales Orders]
+      operationId: getSalesOrderById
+      summary: Get a sales order by id
+      description: Retrieves a sales order details by its id.
+      parameters:
+        - {name: traceId, in: query, required: false, description: Caller-supplied correlation identifier., schema: {type: string}}
+      security:
+        - subscriptionKey: []
+          bearerAuth: []
+          tenantId: []
+      x-evidence:
+        probed: '2026-08-13'
+        url: https://api.nts.web.com/sales-orders/v1/abc
+        status: 401
+      responses:
+        '200':
+          description: The sales order. Web.com does not publish the response body.
+        '401':
+          $ref: '#/components/responses/AccessDenied'
+    put:
+      tags: [Sales Orders]
+      operationId: updateSalesOrder
+      summary: Update a sales order
+      description: >-
+        Updates an existing sales order by replacing the existing sales order's value with the
+        values that you pass into the api. If you do not pass all of the properties then the
+        existing sales order will retain it's original values for those properties.
+      parameters:
+        - {name: traceId, in: query, required: false, description: Caller-supplied correlation identifier., schema: {type: string}}
+      security:
+        - subscriptionKey: []
+          bearerAuth: []
+          tenantId: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SalesOrderEnvelope'
+      responses:
+        '200':
+          description: The sales order was updated. Web.com does not publish the response body.
+        '401':
+          $ref: '#/components/responses/AccessDenied'
+    delete:
+      tags: [Sales Orders]
+      operationId: deleteSalesOrder
+      summary: Delete a sales order by id
+      description: Deletes a sales order by its Id.
+      security:
+        - subscriptionKey: []
+          bearerAuth: []
+          tenantId: []
+      responses:
+        '204':
+          description: The sales order was deleted. Web.com does not publish the response body.
+        '401':
+          $ref: '#/components/responses/AccessDenied'
+  /sso/{customerId}:
+    get:
+      tags: [SSO]
+      operationId: getCustomerSsoUrl
+      summary: Customer get SSO
+      description: This generates a sso url for any given customer owned by your tenant.
+      parameters:
+        - name: customerId
+          in: path
+          required: true
+          description: The identifier of a customer owned by your tenant.
+          schema: {type: string}
+      security:
+        - subscriptionKey: []
+          bearerAuth: []
+          tenantName: []
+      x-evidence:
+        probed: '2026-08-13'
+        url: https://api.nts.web.com/sso/abc
+        status: 401
+        www_authenticate: >-
+          AzureApiManagementKey realm="https://api.nts.web.com/sso",name="Ocp-Apim-Subscription-Key",type="header"
+      responses:
+        '200':
+          description: A single-sign-on URL for the customer. Web.com does not publish the response body.
+        '401':
+          $ref: '#/components/responses/AccessDenied'
+  /service-orders-v2:
+    post:
+      tags: [Service Orders]
+      operationId: createServiceOrders
+      summary: Create service orders
+      description: >-
+        Provision one or more products/services. The request body is an ARRAY of service orders.
+        Each element identifies the customer (either a full `customer` object for a new customer, or
+        a `customerId` for an existing one), the account (either a full `account` object or an
+        `accountId`), and an `actions[]` list naming the `product` and a `services` map whose keys
+        are product-specific service names (the published examples use `EkcsAd` and
+        `ListingManagement`). The `api-version: 2` header is sent alongside the path suffix `-v2`.
+
+
+        BASE URL CAVEAT: in the published collection this operation is the only one addressed
+        through the `{{nts-api-url}}` variable rather than `{{api_gateway_url}}`, and Web.com does
+        not publish the value of `{{nts-api-url}}`. An anonymous probe of
+        https://api.nts.web.com/service-orders-v2 returned the Azure API Management
+        "Resource not found" envelope, so the operation is recorded here without asserting that it
+        is served from the servers[] hosts above. See the verbatim collection for the full examples,
+        which are far larger than the schema summarised here.
+      security:
+        - bearerAuth: []
+          tenantName: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/ServiceOrder'
+      x-evidence:
+        probed: '2026-08-13'
+        url: https://api.nts.web.com/service-orders-v2
+        status: 404
+      responses:
+        '200':
+          description: The service orders were accepted. Web.com does not publish the response body.
+        '401':
+          $ref: '#/components/responses/AccessDenied'
+        '404':
+          $ref: '#/components/responses/ResourceNotFound'
+components:
+  securitySchemes:
+    subscriptionKey:
+      type: apiKey
+      in: header
+      name: Ocp-Apim-Subscription-Key
+      description: >-
+        Your api access key from the developer portal that identifies your subscription to the api.
+        Issued per environment after Web.com International approves your registration.
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: >-
+        This is your auth token that you would receive from the Authorization call — an access token
+        issued by the Web.com Microsoft Entra ID tenant via the client-credentials grant (see the
+        oauth2ClientCredentials scheme).
+    tenantId:
+      type: apiKey
+      in: header
+      name: x-nts-tenant-id
+      description: >-
+        This is your company's unique identifier, provided by Web.com when your subscription is
+        activated. Required on the sales-order operations.
+    tenantName:
+      type: apiKey
+      in: header
+      name: tenant-name
+      description: >-
+        Your tenant's name. Required on the domain, SSO and service-order operations, where it is
+        used in place of x-nts-tenant-id.
+    oauth2ClientCredentials:
+      type: oauth2
+      description: >-
+        Microsoft Entra ID (Azure AD) v1 token endpoint for the Web.com International tenant
+        03fbebc8-de8a-4428-b573-4c4903610dac. The published collection sends grant_type,
+        client_id, client_secret and resource=api://intl.web.com as an
+        application/x-www-form-urlencoded body. Web.com publishes no scope list; the v1 endpoint
+        takes a `resource` audience instead of scopes.
+      flows:
+        clientCredentials:
+          tokenUrl: https://login.microsoftonline.com/03fbebc8-de8a-4428-b573-4c4903610dac/oauth2/token
+          scopes: {}
+  responses:
+    AccessDenied:
+      description: >-
+        Missing or invalid Azure API Management subscription key. Observed live on 2026-08-13.
+      headers:
+        WWW-Authenticate:
+          description: Azure API Management key challenge naming the realm and header.
+          schema: {type: string}
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GatewayError'
+          example:
+            statusCode: 401
+            message: >-
+              Access denied due to missing subscription key. Make sure to include subscription key
+              when making requests to an API.
+    ResourceNotFound:
+      description: No route matched at the gateway. Observed live on 2026-08-13.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GatewayError'
+          example:
+            statusCode: 404
+            message: Resource not found
+  schemas:
+    GatewayError:
+      type: object
+      description: >-
+        The Azure API Management error envelope actually returned by api.nts.web.com. Not RFC 9457
+        problem+json — the content type is application/json.
+      properties:
+        statusCode: {type: integer}
+        message: {type: string}
+    DomainSpinRequest:
+      type: object
+      properties:
+        subdomain:
+          type: string
+          description: The partial word(s) to build suggestions from.
+        extensions:
+          type: array
+          description: TLDs to test.
+          items: {type: string}
+    SalesOrderEnvelope:
+      type: object
+      properties:
+        traceId:
+          type: string
+          description: Caller-supplied correlation identifier.
+        salesOrder:
+          $ref: '#/components/schemas/SalesOrder'
+    SalesOrder:
+      type: object
+      properties:
+        account: {$ref: '#/components/schemas/Account'}
+        contacts:
+          type: array
+          items: {$ref: '#/components/schemas/Contact'}
+        customer: {$ref: '#/components/schemas/Customer'}
+        notes:
+          type: array
+          items: {$ref: '#/components/schemas/Note'}
+        paymentSummary: {$ref: '#/components/schemas/PaymentSummary'}
+        products:
+          type: array
+          items: {$ref: '#/components/schemas/Product'}
+        status: {$ref: '#/components/schemas/SalesOrderStatus'}
+    Account:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Empty string when a new account should be created.
+        name: {type: string}
+    Contact:
+      type: object
+      properties:
+        firstName: {type: string}
+        lastName: {type: string}
+        email: {type: string, format: email}
+        phoneNumber: {type: string}
+        languageCode: {type: string}
+        address1: {type: string}
+        address2: {type: string}
+        city: {type: string}
+        stateOrProvince: {type: string}
+        postalCode: {type: string}
+        countryCode: {type: string}
+        isInvoiceRecipient: {type: boolean}
+        roles:
+          type: array
+          description: >-
+            Values seen in the published examples — Owner, Marketing, Finance, Legal, Accounting,
+            General Manager. Web.com does not publish the closed enumeration.
+          items: {type: string}
+    Customer:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Empty string when a new customer should be created; otherwise the existing customer id.
+        username: {type: string}
+        companyName: {type: string}
+        customerType:
+          type: string
+          description: 'Value seen in the published examples: Person.'
+        legalId: {type: string}
+        firstName: {type: string}
+        lastName: {type: string}
+        email: {type: string, format: email}
+        phoneNumber: {type: string}
+        languageCode: {type: string}
+        address1: {type: string}
+        address2: {type: string}
+        city: {type: string}
+        stateOrProvince: {type: string}
+        postalCode: {type: string}
+        countryCode: {type: string}
+    Note:
+      type: object
+      properties:
+        body: {type: string}
+        createdByUsername: {type: string}
+    PaymentSummary:
+      type: object
+      properties:
+        currencyCode: {type: string}
+        invoiceDeliveryMethod: {type: string}
+        paymentTerms: {type: string}
+        paymentType: {type: string}
+    Product:
+      type: object
+      description: >-
+        NOTE: the published create example names the quantity field `quantity` while the published
+        update example names it `qty`. Both are recorded here because Web.com publishes both; a
+        client cannot tell from the documentation which the API accepts on which operation.
+      properties:
+        name: {type: string}
+        quantity: {type: integer}
+        qty: {type: integer}
+        discountPercent: {type: number}
+        autoRenewServiceAgreement: {type: boolean}
+        serviceAgreementLength: {type: integer}
+        serviceAgreementUnit:
+          type: string
+          description: 'Value seen in the published examples: Month.'
+    SalesOrderStatus:
+      type: object
+      properties:
+        pipelinePhase:
+          type: string
+          description: 'Value seen in the published examples: Sales Lead.'
+        salesPartner: {type: string}
+        salesRep: {type: string}
+    ServiceOrder:
+      type: object
+      description: >-
+        One element of the service-order array. Provide either `customer` (new customer) or
+        `customerId` (existing), and either `account` (new account) or `accountId` (existing).
+      properties:
+        customer: {$ref: '#/components/schemas/ServiceOrderCustomer'}
+        customerId: {type: string}
+        account: {$ref: '#/components/schemas/Account'}
+        accountId: {type: string}
+        actions:
+          type: array
+          items: {$ref: '#/components/schemas/ServiceOrderAction'}
+    ServiceOrderCustomer:
+      type: object
+      description: >-
+        The service-order customer shape adds credentials for the account manager that the
+        sales-order customer shape does not carry.
+      properties:
+        firstName: {type: string}
+        lastName: {type: string}
+        email: {type: string, format: email}
+        phoneNumber: {type: string}
+        languageCode: {type: string}
+        countryCode: {type: string}
+        companyName: {type: string}
+        companyPositionHeld: {type: string}
+        accountManagerUsername: {type: string}
+        accountManagerPassword: {type: string, format: password}
+    ServiceOrderAction:
+      type: object
+      properties:
+        action:
+          type: string
+          description: 'Value seen in the published examples: create.'
+        product:
+          type: string
+          description: 'Value seen in the published examples: EKCSTest.'
+        services:
+          type: object
+          description: >-
+            Product-specific service map. Keys seen in the published examples are `EkcsAd` (an
+            advertising placement, with ad unit, impressions, inventory size, position, template,
+            rate, start/end date and trafficking weight) and `ListingManagement` (business
+            information, address, categories). The published examples annotate several EkcsAd fields
+            inline as required — CustomerEmail, CustomerName, CustomerPhone and EndDate. The full
+            shapes are reproduced verbatim in
+            collections/websitepros-international-platform.postman_collection.json; they are not
+            re-typed here because Web.com publishes no schema for them.
+          additionalProperties: true

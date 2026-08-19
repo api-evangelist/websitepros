@@ -1,0 +1,67 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the Web.com International Platform API
+  version: 1.0.0
+x-generated: '2026-08-13'
+x-method: generated
+x-source: openapi/websitepros-international-platform-openapi-derived.yml
+x-note: >-
+  Web.com publishes no OpenAPI, so the document this overlay extends is itself derived by API
+  Evangelist from Web.com's published Postman collection plus live probes. This overlay carries the
+  annotations API Evangelist adds on top of that derivation — provenance, agent-safety
+  classification and the gaps a consumer should know about — so they stay separable from the
+  literal contract.
+extends: openapi/websitepros-international-platform-openapi-derived.yml
+actions:
+  - target: $.info
+    update:
+      x-apievangelist-provenance: derived-from-published-postman-collection
+      x-apievangelist-contract-source: https://api-docs.intl.web.com/
+      x-apievangelist-openapi-published-by-provider: false
+      x-apievangelist-access-model: request-access-manual-review
+      x-apievangelist-response-schemas-published: false
+  - target: $.paths['/sso/{customerId}'].get
+    update:
+      x-agentic-access:
+        action-class: credential-issuance
+        consequence: high
+        escalation: human-approval-required
+        note: >-
+          Returns a single-sign-on URL that grants access to a customer's account. Not safe for
+          autonomous agent invocation.
+  - target: $.paths['/sales-orders/v1/{salesOrderId}'].delete
+    update:
+      x-agentic-access:
+        action-class: delete
+        consequence: high
+        escalation: human-approval-required
+        idempotent: false
+  - target: $.paths['/sales-orders/v1'].post
+    update:
+      x-agentic-access:
+        action-class: create
+        consequence: medium
+        escalation: confirm
+        idempotent: false
+        note: >-
+          No Idempotency-Key support is published, so a retry after a timeout creates a second
+          sales order.
+  - target: $.paths['/service-orders-v2'].post
+    update:
+      x-agentic-access:
+        action-class: provision
+        consequence: high
+        escalation: human-approval-required
+        idempotent: false
+        note: Provisions billable products against a customer account.
+  - target: $.paths['/api/domain/check/{domain}'].get
+    update:
+      x-agentic-access:
+        action-class: read
+        consequence: low
+        escalation: none
+  - target: $.components.schemas.Product
+    update:
+      x-apievangelist-defect: >-
+        The provider's own published examples disagree on the quantity field name — `quantity` on
+        create, `qty` on update. Reported here rather than silently normalised.

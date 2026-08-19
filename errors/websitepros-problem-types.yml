@@ -1,0 +1,64 @@
+generated: '2026-08-13'
+method: probed
+source: live anonymous probes of https://api.nts.web.com on 2026-08-13
+format: azure-api-management
+format_note: >-
+  NOT RFC 9457. The gateway returns a two-field JSON envelope with content-type application/json,
+  not application/problem+json. Web.com publishes no error reference; every entry below was
+  observed on a real response, and no error that was not observed has been invented.
+envelope:
+  content_type: application/json
+  fields:
+    - name: statusCode
+      type: integer
+      description: Repeats the HTTP status code in the body.
+    - name: message
+      type: string
+      description: Human-readable message. Not a stable machine-readable code.
+  example: '{ "statusCode": 401, "message": "Access denied due to missing subscription key. Make sure to include subscription key when making requests to an API." }'
+  missing:
+    - A stable error `code` or `type` field an agent could branch on.
+    - A correlation identifier in the body (callers supply their own `traceId` on the sales-order operations instead).
+problems:
+  - status: 401
+    title: Access Denied
+    detail: >-
+      Access denied due to missing subscription key. Make sure to include subscription key when
+      making requests to an API.
+    remediation: >-
+      Send your Azure API Management subscription key in the Ocp-Apim-Subscription-Key header. The
+      response carries a WWW-Authenticate header naming the realm and the expected header name.
+    headers:
+      WWW-Authenticate: >-
+        AzureApiManagementKey realm="https://api.nts.web.com/<product>",name="Ocp-Apim-Subscription-Key",type="header"
+    observed_on:
+      - {url: 'https://api.nts.web.com/sales-orders/v1', status: 401}
+      - {url: 'https://api.nts.web.com/sales-orders/v1/abc', status: 401}
+      - {url: 'https://api.nts.web.com/api/domain/check/test.com', status: 401}
+      - {url: 'https://api.nts.web.com/sso/abc', status: 401}
+      - {url: 'https://api-dev.nts.web.com/healthcheck', status: 401}
+    source_operation: openapi/websitepros-international-platform-openapi-derived.yml#/components/responses/AccessDenied
+  - status: 404
+    title: Resource Not Found
+    detail: Resource not found
+    remediation: >-
+      No API Management route matched the request. Check the path and that your subscription covers
+      that API product in that environment; two documented paths answer 404 anonymously on
+      production (see below), so a 404 here does not always mean the caller got the path wrong.
+    observed_on:
+      - {url: 'https://api.nts.web.com/healthcheck', status: 404}
+      - {url: 'https://api.nts.web.com/api/domain/spin', status: 404}
+      - {url: 'https://api.nts.web.com/service-orders-v2', status: 404}
+      - {url: 'https://api.nts.web.com/', status: 404}
+    source_operation: openapi/websitepros-international-platform-openapi-derived.yml#/components/responses/ResourceNotFound
+findings:
+  - >-
+    Three paths that Web.com documents in its own published collection return 404 rather than the
+    401 challenge their sibling routes return: /healthcheck, /api/domain/spin and
+    /service-orders-v2 on api.nts.web.com. /healthcheck DOES challenge with 401 on the development
+    gateway (api-dev.nts.web.com), which suggests the production gateway does not publish it. A
+    caller cannot distinguish "route not deployed" from "route not in your subscription" from this
+    envelope.
+  - >-
+    There is no documented error code registry, no problem-type URIs, and no rate-limit or
+    retry signalling on any observed response.

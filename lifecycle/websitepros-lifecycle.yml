@@ -1,0 +1,68 @@
+generated: '2026-08-13'
+method: derived
+source: >-
+  collections/websitepros-international-platform.postman_collection.json +
+  openapi/websitepros-international-platform-openapi-derived.yml + live probes on 2026-08-13
+versioning:
+  scheme: uri-path
+  current:
+    sales-orders: v1
+    service-orders: v2
+  additional_signal:
+    header: api-version
+    value: '2'
+    applies_to: [createServiceOrders]
+  docs: https://api-docs.intl.web.com/
+  note: >-
+    Versions are per product, not per API. Service orders express the version twice — as the path
+    suffix `-v2` and as an `api-version: 2` request header.
+deprecation:
+  policy_url: null
+  policy_published: false
+  sunset_header: unknown
+  sunset_header_note: >-
+    RFC 8594 Sunset/Deprecation headers could not be observed because every live route answers 401
+    before any successful response is returned.
+  note: >-
+    Web.com publishes no deprecation or sunset policy for this API. NO `Deprecation` pointer is
+    emitted in apis.yml.
+sla:
+  url: null
+  uptime_target: null
+  note: No SLA or uptime commitment is published on the developer portal or in the documentation.
+status_page:
+  url: null
+  published: false
+  probe:
+    host: status.web.com
+    dns: resolves (Cloudflare)
+    url: https://status.web.com/
+    http_status: 403
+    body: >-
+      Cloudflare bot challenge served from the web.com marketing template ("Cloudflare Captcha Page
+      | Web.com"); no status content was reachable.
+  note: >-
+    A status.web.com hostname exists but did not serve a status page to an anonymous client, and no
+    status page is linked from the API documentation or either developer portal. Because presence
+    could not be verified, NO `StatusPage` pointer is emitted in apis.yml.
+health_endpoint:
+  path: /healthcheck
+  documented: true
+  production: {url: 'https://api.nts.web.com/healthcheck', status: 404}
+  development: {url: 'https://api-dev.nts.web.com/healthcheck', status: 401}
+  note: >-
+    Web.com's own getting-started instructions tell new developers to "Call the Healthcheck Api" to
+    confirm access. On the production gateway that documented path returns the API Management
+    "Resource not found" envelope to an anonymous caller, while the development gateway returns the
+    expected 401 subscription-key challenge.
+deprecated_operations: []
+changelog:
+  published: false
+  note: No dated changelog or release notes were found for this API on any reachable Web.com surface.
+retirement_signals:
+  - source: https://www.prnewswire.com/news-releases/network-solutions-and-webcom-consolidate-to-deliver-an-even-stronger-all-in-one-digital-experience-302484560.html
+    signal: >-
+      Newfold Digital announced in 2025 that Web.com is being consolidated into Network Solutions,
+      with the Network Solutions AI Website Builder "powered by Web.com's technology". That is a
+      company-level brand consolidation; nothing in the International Platform API documentation
+      announces a migration or sunset for this API, so no deprecation is asserted here.

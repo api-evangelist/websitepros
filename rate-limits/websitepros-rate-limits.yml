@@ -1,0 +1,26 @@
+generated: '2026-08-13'
+method: probed
+source: live anonymous probes of https://api.nts.web.com and https://api-dev.nts.web.com on 2026-08-13
+docs: https://api-docs.intl.web.com/
+limit_count: 0
+limits: []
+response_headers: []
+exhaustion_status: null
+note: >-
+  Web.com publishes no rate limits for the International Platform API. Its documentation
+  (api-docs.intl.web.com) covers access, endpoints, headers and request bodies but contains no
+  throttling, quota, burst or Retry-After section, and neither Azure API Management developer
+  portal exposes its product policies to an anonymous caller. No RateLimit-*, X-RateLimit-* or
+  Retry-After header appeared on any observed response.
+evidence:
+  - {url: 'https://api.nts.web.com/sales-orders/v1', http_status: 401, rate_limit_headers: none}
+  - {url: 'https://api.nts.web.com/api/domain/check/test.com', http_status: 401, rate_limit_headers: none}
+  - {url: 'https://api.nts.web.com/sso/abc', http_status: 401, rate_limit_headers: none}
+  - {url: 'https://api-dev.nts.web.com/healthcheck', http_status: 401, rate_limit_headers: none}
+  - {url: 'https://api-docs.intl.web.com/', http_status: 200, rate_limit_headers: n/a}
+caveat: >-
+  This is an honest zero for the PUBLISHED surface. Azure API Management commonly enforces
+  rate-limit and quota policies per product, and those policies are visible to approved subscribers
+  on the API detail pages inside the developer portal. An anonymous observer cannot see them, and
+  neither can a prospective integrator evaluating the API before applying for access — which is the
+  finding.

@@ -1,0 +1,80 @@
+generated: '2026-08-13'
+method: derived
+source: openapi/websitepros-international-platform-openapi-derived.yml
+note: >-
+  Derived from the request bodies Web.com publishes in its own Postman collection. Response shapes
+  are not represented because Web.com publishes none and the live surface is gated, so the graph
+  below describes what a caller must SEND, not what the API returns.
+entities:
+  - name: SalesOrder
+    description: A pipeline record combining a customer, an account, contacts, products and payment terms.
+    schema: '#/components/schemas/SalesOrder'
+    operations: [createSalesOrder, listSalesOrders, getSalesOrderById, updateSalesOrder, deleteSalesOrder]
+    identifier: salesOrderId
+  - name: Customer
+    description: The buying party. An empty `id` means "create a new customer".
+    schema: '#/components/schemas/Customer'
+    identifier: id
+  - name: Account
+    description: The container products are placed on. An empty `id` means "create a new account".
+    schema: '#/components/schemas/Account'
+    identifier: id
+  - name: Contact
+    description: A named person on the order, with one or more roles.
+    schema: '#/components/schemas/Contact'
+  - name: Product
+    description: A line item with quantity, discount and service-agreement term.
+    schema: '#/components/schemas/Product'
+  - name: Note
+    description: A free-text note attributed to a username.
+    schema: '#/components/schemas/Note'
+  - name: PaymentSummary
+    description: Currency, invoice delivery method, payment terms and payment type.
+    schema: '#/components/schemas/PaymentSummary'
+  - name: SalesOrderStatus
+    description: Pipeline phase plus the sales partner and sales rep the order is attributed to.
+    schema: '#/components/schemas/SalesOrderStatus'
+  - name: ServiceOrder
+    description: A provisioning instruction attaching product actions to a customer and account.
+    schema: '#/components/schemas/ServiceOrder'
+    operations: [createServiceOrders]
+  - name: ServiceOrderAction
+    description: One `create` action naming a product and a product-specific services map.
+    schema: '#/components/schemas/ServiceOrderAction'
+  - name: Domain
+    description: >-
+      A domain name tested for availability or generated as a suggestion. Not a persisted resource
+      in this API — there is no domain read/update/delete surface, only check and spin.
+    operations: [checkDomainAvailability, spinDomainSuggestions]
+relationships:
+  - {from: SalesOrder, to: Customer, type: has_one, via: customer}
+  - {from: SalesOrder, to: Account, type: has_one, via: account}
+  - {from: SalesOrder, to: Contact, type: has_many, via: contacts}
+  - {from: SalesOrder, to: Product, type: has_many, via: products}
+  - {from: SalesOrder, to: Note, type: has_many, via: notes}
+  - {from: SalesOrder, to: PaymentSummary, type: has_one, via: paymentSummary}
+  - {from: SalesOrder, to: SalesOrderStatus, type: has_one, via: status}
+  - {from: ServiceOrder, to: Customer, type: has_one, via: 'customer | customerId'}
+  - {from: ServiceOrder, to: Account, type: has_one, via: 'account | accountId'}
+  - {from: ServiceOrder, to: ServiceOrderAction, type: has_many, via: actions}
+tenancy:
+  root: Tenant
+  note: >-
+    Every entity is scoped to the caller's tenant, asserted by the x-nts-tenant-id or tenant-name
+    header rather than by anything in the payload. The SSO operation is explicitly scoped — "any
+    given customer owned by your tenant".
+divergences:
+  - >-
+    Two different Customer shapes exist. The sales-order Customer carries username, companyName,
+    customerType and legalId; the service-order customer carries accountManagerUsername,
+    accountManagerPassword and companyPositionHeld instead. They are not the same schema even
+    though both are called the customer.
+  - >-
+    Product quantity is `quantity` in the published create example and `qty` in the published
+    update example.
+identifiers:
+  format: opaque hexadecimal string
+  observed_lengths: [8, 32]
+  note: >-
+    8-hex-character ids in the sales-order examples, 32-hex-character ids in the service-order
+    examples. Web.com documents no id format or prefix scheme.

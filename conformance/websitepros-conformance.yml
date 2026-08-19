@@ -1,0 +1,73 @@
+generated: '2026-08-13'
+method: derived
+source: >-
+  collections/websitepros-international-platform.postman_collection.json +
+  openapi/websitepros-international-platform-openapi-derived.yml + live probes on 2026-08-13
+standards:
+  - id: oauth2
+    conforms: true
+    evidence: >-
+      Client-credentials grant against the Microsoft Entra ID v1 token endpoint for tenant
+      03fbebc8-de8a-4428-b573-4c4903610dac, with grant_type/client_id/client_secret/resource sent
+      as application/x-www-form-urlencoded, documented in Web.com's published collection.
+  - id: oidc
+    conforms: partial
+    evidence: >-
+      The token authority publishes an OpenID Connect discovery document (HTTP 200 at
+      https://login.microsoftonline.com/03fbebc8-de8a-4428-b573-4c4903610dac/v2.0/.well-known/openid-configuration),
+      but that document is served by Microsoft, not by Web.com, and the API uses the v1 `resource`
+      audience rather than OIDC scopes. Web.com serves no OIDC discovery of its own.
+  - id: rfc9457-problem-details
+    conforms: false
+    evidence: >-
+      Errors are the Azure API Management envelope {statusCode, message} with content-type
+      application/json, not application/problem+json. Observed live on 2026-08-13.
+  - id: rfc9116-security-txt
+    conforms: false
+    evidence: >-
+      /.well-known/security.txt returned 404 on api.nts.web.com, api-dev.nts.web.com,
+      nts.developer.azure-api.net and api-docs.intl.web.com, and 403 (Cloudflare bot challenge) on
+      www.web.com.
+  - id: rfc8594-sunset-header
+    conforms: unknown
+    evidence: >-
+      Could not be observed; every route answers 401 before a successful response is produced.
+  - id: idempotency
+    conforms: false
+    evidence: >-
+      No Idempotency-Key header and no retry-safety statement in the published documentation. See
+      conventions/websitepros-conventions.yml.
+  - id: pagination
+    conforms: true
+    evidence: >-
+      page / pageSize / sortBy query parameters on listSalesOrders, with `-` prefix for descending
+      sort, documented in the published collection.
+  - id: json-api
+    conforms: false
+    evidence: Plain JSON request and response bodies; no JSON:API document structure.
+  - id: openapi
+    conforms: false
+    evidence: >-
+      Web.com publishes no OpenAPI. The Azure API Management developer portal that would export one
+      returns an empty API list to anonymous callers
+      (https://nts.developer.azure-api.net/developer/apis?api-version=2022-04-01-preview -> 200
+      {"value":[],"nextLink":null}). The spec in openapi/ is derived by API Evangelist, not
+      published by Web.com.
+  - id: asyncapi
+    conforms: false
+    evidence: No event, webhook or streaming surface is documented.
+  - id: mcp
+    conforms: false
+    evidence: No Model Context Protocol server is published for this API.
+  - id: a2a
+    conforms: false
+    evidence: >-
+      /.well-known/agent-card.json and /.well-known/agent.json returned 404 on every reachable
+      Web.com host and 403 (Cloudflare bot challenge) on www.web.com.
+compliance_programs:
+  published: []
+  note: >-
+    No trust center, no named certification (SOC 2, ISO 27001, PCI DSS, HIPAA, FedRAMP) and no
+    compliance page could be verified. The web.com marketing site, where such a page would live,
+    serves a Cloudflare bot challenge (HTTP 403) to every anonymous request, so absence here is a
+    limit of the probe, not a finding about Web.com. NO `Compliance` pointer is emitted.

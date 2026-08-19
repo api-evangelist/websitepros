@@ -1,0 +1,103 @@
+generated: '2026-08-13'
+method: probed
+source: live anonymous GETs on 2026-08-13
+result: no-documents-found
+note: >-
+  Every /.well-known/ path was probed on every Web.com host reachable in this pass. Nothing was
+  served. NO `WellKnown` and NO `SecurityTxt` pointer is emitted in apis.yml — this file records an
+  absence, and an absence must not be published as a presence.
+
+
+  Two different kinds of miss are recorded below and they are not the same finding. The four
+  Web.com API/documentation hosts and both Azure API Management developer portals returned a clean
+  404 for every path: the surface is genuinely not served. www.web.com returned 403 to every path
+  including `/` and `/robots.txt`, with `cf-mitigated: challenge` and a body titled "Cloudflare
+  Captcha Page | Web.com" — that is a bot challenge, so for the marketing host this is an
+  unverifiable, not a confirmed absence.
+
+
+  The API's OAuth authority does publish an OpenID Connect discovery document, but it is served by
+  Microsoft (login.microsoftonline.com) for the Web.com Entra tenant, not by a Web.com host. It is
+  recorded in authentication/websitepros-authentication.yml and deliberately NOT counted here.
+hosts:
+  - host: api.nts.web.com
+    role: production API gateway
+    reachable: true
+    documents:
+      - {path: /.well-known/security.txt, status: 404}
+      - {path: /.well-known/openid-configuration, status: 404}
+      - {path: /.well-known/oauth-authorization-server, status: 404}
+      - {path: /.well-known/oauth-protected-resource, status: 404}
+      - {path: /.well-known/api-catalog, status: 404}
+      - {path: /.well-known/ai-plugin.json, status: 404}
+      - {path: /.well-known/agent-card.json, status: 404}
+      - {path: /.well-known/agent.json, status: 404}
+      - {path: /llms.txt, status: 404}
+  - host: api-dev.nts.web.com
+    role: development API gateway
+    reachable: true
+    documents:
+      - {path: /.well-known/security.txt, status: 404}
+      - {path: /.well-known/openid-configuration, status: 404}
+      - {path: /.well-known/oauth-authorization-server, status: 404}
+      - {path: /.well-known/oauth-protected-resource, status: 404}
+      - {path: /.well-known/api-catalog, status: 404}
+      - {path: /.well-known/ai-plugin.json, status: 404}
+      - {path: /.well-known/agent-card.json, status: 404}
+      - {path: /.well-known/agent.json, status: 404}
+      - {path: /llms.txt, status: 404}
+  - host: api-docs.intl.web.com
+    role: published API documentation (Postman-hosted, custom domain)
+    reachable: true
+    documents:
+      - {path: /.well-known/security.txt, status: 404}
+      - {path: /.well-known/openid-configuration, status: 404}
+      - {path: /.well-known/oauth-authorization-server, status: 404}
+      - {path: /.well-known/oauth-protected-resource, status: 404}
+      - {path: /.well-known/api-catalog, status: 404}
+      - {path: /.well-known/ai-plugin.json, status: 404}
+      - {path: /.well-known/agent-card.json, status: 404}
+      - {path: /.well-known/agent.json, status: 404}
+      - {path: /llms.txt, status: 404}
+  - host: nts.developer.azure-api.net
+    role: production developer portal
+    reachable: true
+    documents:
+      - {path: /.well-known/security.txt, status: 404}
+      - {path: /.well-known/openid-configuration, status: 404}
+      - {path: /.well-known/oauth-authorization-server, status: 404}
+      - {path: /.well-known/oauth-protected-resource, status: 404}
+      - {path: /.well-known/api-catalog, status: 404}
+      - {path: /.well-known/ai-plugin.json, status: 404}
+      - {path: /.well-known/agent-card.json, status: 404}
+      - {path: /.well-known/agent.json, status: 404}
+      - {path: /llms.txt, status: 404}
+  - host: ntsdev.developer.azure-api.net
+    role: development developer portal
+    reachable: true
+    documents:
+      - {path: /.well-known/security.txt, status: 404}
+      - {path: /.well-known/openid-configuration, status: 404}
+      - {path: /.well-known/oauth-authorization-server, status: 404}
+      - {path: /.well-known/oauth-protected-resource, status: 404}
+      - {path: /.well-known/api-catalog, status: 404}
+      - {path: /.well-known/ai-plugin.json, status: 404}
+      - {path: /.well-known/agent-card.json, status: 404}
+      - {path: /.well-known/agent.json, status: 404}
+      - {path: /llms.txt, status: 404}
+  - host: www.web.com
+    role: corporate / retail website
+    reachable: false
+    blocked_by: 'Cloudflare bot challenge (cf-mitigated: challenge)'
+    documents:
+      - {path: /.well-known/security.txt, status: 403}
+      - {path: /.well-known/openid-configuration, status: 403}
+      - {path: /.well-known/oauth-authorization-server, status: 403}
+      - {path: /.well-known/oauth-protected-resource, status: 403}
+      - {path: /.well-known/api-catalog, status: 403}
+      - {path: /.well-known/ai-plugin.json, status: 403}
+      - {path: /.well-known/agent-card.json, status: 403}
+      - {path: /.well-known/agent.json, status: 403}
+      - {path: /llms.txt, status: 403}
+      - {path: /robots.txt, status: 403}
+      - {path: /, status: 403}

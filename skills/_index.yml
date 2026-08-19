@@ -1,0 +1,35 @@
+generated: '2026-08-13'
+method: generated
+source: >-
+  openapi/websitepros-international-platform-openapi-derived.yml +
+  collections/websitepros-international-platform.postman_collection.json
+note: >-
+  Packaged Agent Skills for the Web.com International Platform API. Every operationId referenced
+  below exists in the derived spec, which in turn was built only from Web.com's own published
+  collection and live probes. Web.com publishes no skills or AGENTS.md of its own.
+skills:
+  - name: websitepros-sales-order-lifecycle
+    file: websitepros-sales-order-lifecycle.md
+    description: >-
+      Create, find, update and delete a sales order, with the three-header authentication and the
+      non-idempotent-write hazards.
+    api: Web.com International Platform API
+    operations: [createSalesOrder, listSalesOrders, getSalesOrderById, updateSalesOrder, deleteSalesOrder]
+  - name: websitepros-domain-availability
+    file: websitepros-domain-availability.md
+    description: >-
+      Check a domain for availability and generate available-name suggestions across a set of TLDs.
+    api: Web.com International Platform API
+    operations: [checkDomainAvailability, spinDomainSuggestions]
+not_written:
+  - operation: getCustomerSsoUrl
+    reason: >-
+      Mints a credential-bearing single-sign-on URL for a customer account. Packaging it as an
+      agent skill would be publishing operating instructions for issuing account access; it is
+      classified as human-approval-required in
+      overlays/websitepros-international-platform-overlay.yaml instead.
+  - operation: createServiceOrders
+    reason: >-
+      The base URL is an unpublished collection variable ({{nts-api-url}}) and the documented path
+      returned 404 on the production gateway, so a skill could not tell an agent where to send the
+      request without guessing a host.

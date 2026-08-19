@@ -1,0 +1,125 @@
+generated: '2026-08-13'
+method: derived
+source: >-
+  collections/websitepros-international-platform.postman_collection.json (Web.com's own published
+  documentation) + live probes of api.nts.web.com on 2026-08-13
+docs: https://api-docs.intl.web.com/
+authentication:
+  style: layered
+  summary: >-
+    Three headers on every call — Ocp-Apim-Subscription-Key (Azure API Management subscription),
+    Authorization: Bearer (Microsoft Entra ID client-credentials token), and a tenant identifier.
+  tenant_header_split:
+    x-nts-tenant-id: [sales-orders]
+    tenant-name: [domain, sso, service-orders]
+    note: >-
+      The two tenant headers are not interchangeable in the documentation; which one to send
+      depends on which product you are calling. This is an inconsistency in the published surface,
+      not a documented rule.
+  see: authentication/websitepros-authentication.yml
+idempotency:
+  supported: false
+  evidence: >-
+    No Idempotency-Key header, no idempotency section, and no retry-safety statement appears
+    anywhere in Web.com's published documentation. The write operations (createSalesOrder,
+    createServiceOrders) carry no client-supplied deduplication key. `traceId` is a correlation
+    identifier, not an idempotency key — nothing in the documentation says a repeated traceId
+    suppresses a duplicate create.
+  note: >-
+    Because idempotency is genuinely absent, NO `Idempotency` pointer is emitted in apis.yml. This
+    file records the absence.
+pagination:
+  style: page-number
+  parameters:
+    - {name: page, in: query, description: '1-based page number.', example: 1}
+    - {name: pageSize, in: query, description: Records per page., example: 10}
+    - name: sortBy
+      in: query
+      description: >-
+        Sort field; a leading `-` reverses the order. Both `createdOnUtc` and `-createdOnUtc` appear
+        in the published examples.
+      example: createdOnUtc
+  applies_to: [listSalesOrders]
+  response_fields: unknown
+  response_fields_note: >-
+    Web.com does not publish the list response body, and the endpoint is gated, so the envelope
+    (total count, page links, cursor) could not be observed. Not guessed.
+filtering:
+  style: single-criteria-parameter
+  parameters:
+    - name: criteria
+      in: query
+      description: >-
+        One free-text parameter that is overloaded across several meanings. The published
+        collection uses the same `criteria` parameter to filter by sales partner
+        ("Web.com - UK"), by sales rep, and by account name, with no field selector to say which.
+    - {name: processed, in: query, description: 'Boolean filter on processed state.'}
+  note: >-
+    An agent cannot tell from the documentation how `criteria` is dispatched across those three
+    meanings; there is no documented field qualifier.
+tracing:
+  request_id: traceId
+  location: [query, body]
+  description: >-
+    Caller-supplied correlation identifier. It appears both as a `traceId` query parameter on the
+    sales-order read/update operations and as a top-level `traceId` property in the sales-order
+    create/update request body. Web.com does not document a server-generated request-id response
+    header, and none was observed on any probe.
+versioning:
+  schemes:
+    - {style: uri-path, example: '/sales-orders/v1', applies_to: [sales-orders]}
+    - {style: uri-path-suffix, example: '/service-orders-v2', applies_to: [service-orders]}
+    - {style: header, header: api-version, example: '2', applies_to: [service-orders]}
+  current: {sales-orders: v1, service-orders: v2}
+  note: >-
+    Three different versioning styles coexist on one gateway. Service orders carry the version
+    twice — in the path suffix `-v2` AND in an `api-version: 2` header.
+  see: lifecycle/websitepros-lifecycle.yml
+environments:
+  model: separate-registration-per-environment
+  environments:
+    - {name: production, gateway: 'https://api.nts.web.com', portal: 'https://nts.developer.azure-api.net'}
+    - {name: development, gateway: 'https://api-dev.nts.web.com', portal: 'https://ntsdev.developer.azure-api.net'}
+  note: >-
+    Keys are not portable between environments; you register, verify and get approved separately
+    for each.
+  see: sandbox/websitepros-sandbox.yml
+errors:
+  envelope: '{ "statusCode": <int>, "message": "<string>" }'
+  content_type: application/json
+  rfc9457: false
+  stable_codes: false
+  see: errors/websitepros-problem-types.yml
+rate_limiting:
+  documented: false
+  headers_observed: []
+  note: >-
+    No RateLimit-*, X-RateLimit-* or Retry-After header appeared on any observed response, and no
+    limits are published.
+  see: rate-limits/websitepros-rate-limits.yml
+field_conventions:
+  casing: camelCase
+  casing_exception: >-
+    The service-order `services` maps use PascalCase keys (AdUnit, CustomerEmail, StartDate,
+    ListingManagement.ClientSuppliedData.BusinessInformation.BusinessName) while the rest of the
+    API is camelCase.
+  inconsistencies:
+    - >-
+      Product quantity is `quantity` in the published create example and `qty` in the published
+      update example.
+    - >-
+      Empty string is used as the sentinel for "create a new one" on `account.id` and `customer.id`
+      rather than omitting the field or sending null.
+  identifiers:
+    format: opaque string
+    examples_note: >-
+      The published examples use 8-hex-character account/customer ids in the sales-order surface
+      (27d84bd1) and 32-hex-character ids in the service-order surface
+      (1234567890abcdef1234567890abcdef). Web.com does not document an id format.
+media_types:
+  request: [application/json, application/x-www-form-urlencoded]
+  request_note: application/x-www-form-urlencoded is used only on the Entra token call.
+  response: [application/json]
+expansion: {supported: unknown, note: Not documented.}
+metadata: {supported: unknown, note: Not documented.}
+webhooks: {supported: false, note: No event, webhook, callback or streaming surface appears in the published documentation.}

@@ -1,0 +1,22 @@
+generated: '2026-08-13'
+method: searched
+source: >-
+  npm registry search, PyPI, GitHub org lookup, and Web.com's own published documentation at
+  https://api-docs.intl.web.com/
+package_count: 0
+packages: []
+note: >-
+  Web.com ships no first-party client library for the International Platform API in any registry
+  that was searched, and its published documentation offers no SDK, only raw HTTP examples in the
+  Postman collection. The collection itself is the closest thing to a client Web.com distributes,
+  and it is saved in this repository at
+  collections/websitepros-international-platform.postman_collection.json. NO `SDKs` pointer is
+  emitted in apis.yml, because there is no SDK.
+searched:
+  - {registry: npm, query: 'web.com nts / webdotcom', result: 'no first-party package; every hit belongs to an unrelated publisher'}
+  - {registry: pypi, package: webcom, http_status: 200, result: 'placeholder 0.0.0.dev0 with no author, home page or summary — not Web.com'}
+  - {registry: pypi, package: web-com, http_status: 404}
+  - {registry: pypi, package: networksolutions, http_status: 404}
+  - {registry: github, account: webdotcom, http_status: 200, result: '"Web dot Com Website Development Philippines Inc." — an unrelated company, 0 public repos'}
+  - {registry: github, org: newfold-digital, http_status: 404}
+  - {registry: docs, url: 'https://api-docs.intl.web.com/', http_status: 200, result: 'no SDK or client-library section'}

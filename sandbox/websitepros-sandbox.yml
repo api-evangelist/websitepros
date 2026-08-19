@@ -1,0 +1,57 @@
+generated: '2026-08-13'
+method: searched
+source: https://api-docs.intl.web.com/
+docs: https://api-docs.intl.web.com/
+model: separate-development-environment
+summary: >-
+  Web.com runs a full, separately-registered development environment alongside production for the
+  International Platform API. It is a real non-production environment, not a mock console — there is
+  no in-browser try-it, no test key prefix scheme and no published fixture data.
+environments:
+  - name: development
+    portal: https://ntsdev.developer.azure-api.net
+    portal_status: 200
+    portal_title: Home - Web.com International API
+    gateway: https://api-dev.nts.web.com
+    gateway_evidence:
+      url: https://api-dev.nts.web.com/healthcheck
+      http_status: 401
+      note: >-
+        Answered the Azure API Management subscription-key challenge, confirming the development
+        gateway is live and routing the documented healthcheck path.
+  - name: production
+    portal: https://nts.developer.azure-api.net
+    portal_status: 200
+    gateway: https://api.nts.web.com
+access:
+  self_service: false
+  separate_registration_per_environment: true
+  steps:
+    - Sign up at the development developer portal (https://ntsdev.developer.azure-api.net/signup).
+    - Verify your email address from the link Web.com sends.
+    - Wait for Web.com International to review and activate your subscription and issue your Tenant Id.
+    - Retrieve your development subscription key from the portal and call the healthcheck operation.
+  note: >-
+    Web.com's own instructions state you must "sign up separately for each environment"; a
+    development key does not work against production and vice versa.
+key_scheme:
+  test_live_prefixes: false
+  note: >-
+    Keys are Azure API Management subscription keys with no documented test/live prefix. The
+    environment is distinguished by the gateway hostname, not by the key format, so a caller cannot
+    tell from a key alone which environment it belongs to.
+test_data:
+  fixtures: []
+  test_identifiers: []
+  note: >-
+    Web.com publishes no test cards, no magic identifiers, no seeded customers and no sandbox reset
+    or time-simulation tooling. The example values in the published collection (test.com for the
+    domain check, an example customer named in the sales-order bodies) are documentation examples,
+    not guaranteed sandbox fixtures, and are not recorded here as test data.
+console:
+  in_browser_try_it: unknown
+  note: >-
+    Azure API Management developer portals normally offer an interactive console on each API detail
+    page, but the anonymous API list on both portals is empty
+    (https://nts.developer.azure-api.net/developer/apis?api-version=2022-04-01-preview returned 200
+    with {"value":[],"nextLink":null}), so no console could be reached without an approved account.

@@ -1,0 +1,105 @@
+generated: '2026-08-13'
+method: searched
+source: https://api-docs.intl.web.com/
+docs: https://api-docs.intl.web.com/
+note: >-
+  Read from Web.com's own published "International Platform Documentation" (the public Postman
+  collection at api-docs.intl.web.com) and confirmed against live challenges observed on
+  api.nts.web.com on 2026-08-13. Web.com publishes no OpenAPI, so the scheme list below is
+  documentary, not spec-derived; it is mirrored into the derived spec at
+  openapi/websitepros-international-platform-openapi-derived.yml.
+summary:
+  types: [apiKey, http, oauth2]
+  api_key_in: [header]
+  oauth2_flows: [clientCredentials]
+  layered: true
+  layered_note: >-
+    Three credentials travel on the same request: an Azure API Management subscription key, a
+    Microsoft Entra ID bearer token, and a tenant identifier. None of the three is sufficient on
+    its own.
+schemes:
+  - name: subscriptionKey
+    type: apiKey
+    in: header
+    parameter: Ocp-Apim-Subscription-Key
+    description: >-
+      Azure API Management subscription key identifying your subscription to the API. Issued
+      separately per environment after Web.com International manually reviews and approves your
+      developer-portal registration.
+    required: true
+    evidence:
+      url: https://api.nts.web.com/sales-orders/v1
+      http_status: 401
+      www_authenticate: >-
+        AzureApiManagementKey realm="https://api.nts.web.com/sales-orders",name="Ocp-Apim-Subscription-Key",type="header"
+  - name: bearerAuth
+    type: http
+    scheme: bearer
+    description: >-
+      Access token from the Web.com Microsoft Entra ID tenant, sent as `Authorization: Bearer`.
+      The published collection obtains it with the client-credentials grant.
+    required: true
+  - name: tenantId
+    type: apiKey
+    in: header
+    parameter: x-nts-tenant-id
+    description: >-
+      Your company's unique identifier, supplied by Web.com when the subscription is activated.
+      Required on the sales-order operations.
+    required: true
+    applies_to: [createSalesOrder, listSalesOrders, getSalesOrderById, updateSalesOrder, deleteSalesOrder]
+  - name: tenantName
+    type: apiKey
+    in: header
+    parameter: tenant-name
+    description: >-
+      Your tenant's name, used in place of x-nts-tenant-id on the domain, SSO and service-order
+      operations.
+    required: true
+    applies_to: [checkDomainAvailability, spinDomainSuggestions, getCustomerSsoUrl, createServiceOrders]
+  - name: oauth2ClientCredentials
+    type: oauth2
+    flows:
+      - flow: clientCredentials
+        tokenUrl: https://login.microsoftonline.com/03fbebc8-de8a-4428-b573-4c4903610dac/oauth2/token
+        audience: api://intl.web.com
+        parameters: [grant_type, client_id, client_secret, resource]
+        content_type: application/x-www-form-urlencoded
+        scopes: {}
+        scopes_note: >-
+          Web.com publishes no scope list. The v1 Entra endpoint in the published collection takes a
+          `resource` audience (api://intl.web.com) rather than scopes, so there is no scope surface
+          to record and no scopes/ artifact in this repository.
+    identity_provider:
+      name: Microsoft Entra ID (Azure AD)
+      tenant_id: 03fbebc8-de8a-4428-b573-4c4903610dac
+      discovery: https://login.microsoftonline.com/03fbebc8-de8a-4428-b573-4c4903610dac/v2.0/.well-known/openid-configuration
+      discovery_status: 200
+      issuer: https://login.microsoftonline.com/03fbebc8-de8a-4428-b573-4c4903610dac/v2.0
+      note: >-
+        The OIDC discovery document is served by Microsoft, not by Web.com. It is recorded here as
+        the token authority for this API; it is NOT counted as a Web.com-served /.well-known
+        surface, and no WellKnown pointer is emitted for it.
+onboarding:
+  model: request-access
+  steps:
+    - Register at the developer portal for the environment you want (production and development are separate registrations).
+    - Verify your email address from the link Web.com sends.
+    - Wait for Web.com International to review and activate your subscription; they also issue your Tenant Id.
+    - Retrieve your subscription keys from the developer portal.
+    - Call the healthcheck operation to confirm connectivity.
+  portals:
+    - environment: production
+      portal: https://nts.developer.azure-api.net
+      gateway: https://api.nts.web.com
+      portal_status: 200
+    - environment: development
+      portal: https://ntsdev.developer.azure-api.net
+      gateway: https://api-dev.nts.web.com
+      portal_status: 200
+gaps:
+  - >-
+    The developer portal's anonymous API list is empty (GET
+    https://nts.developer.azure-api.net/developer/apis?api-version=2022-04-01-preview returned
+    200 with {"value":[],"nextLink":null}), so the Azure API Management OpenAPI export that would
+    normally back this API is visible only to approved, signed-in subscribers.

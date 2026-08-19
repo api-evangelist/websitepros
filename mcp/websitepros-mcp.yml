@@ -1,0 +1,81 @@
+generated: '2026-08-13'
+method: derived
+status: candidate
+source: openapi/websitepros-international-platform-openapi-derived.yml
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: unknown
+  verified: searched
+  note: >-
+    Web.com ships NO Model Context Protocol server for this API — no hosted endpoint, no npm or
+    PyPI package, and no mention of MCP anywhere in its published documentation. The tools below
+    are a CANDIDATE mapping derived by API Evangelist from the operations Web.com publishes; no
+    endpoint URL has been invented, and nothing here is callable today.
+server:
+  name: websitepros
+  transport: null
+  url: null
+tools:
+  - name: check_domain_availability
+    description: Check to see if a domain name is available for registration.
+    source_operation: openapi/websitepros-international-platform-openapi-derived.yml#checkDomainAvailability
+    consequence: read
+  - name: spin_domain_suggestions
+    description: Get a list of available domain names given partial words and a set of TLDs.
+    source_operation: openapi/websitepros-international-platform-openapi-derived.yml#spinDomainSuggestions
+    consequence: read
+  - name: list_sales_orders
+    description: List sales orders, paged and filtered by pipeline phase, processed state, sales partner, sales rep or account name.
+    source_operation: openapi/websitepros-international-platform-openapi-derived.yml#listSalesOrders
+    consequence: read
+  - name: get_sales_order
+    description: Retrieve a sales order by its id.
+    source_operation: openapi/websitepros-international-platform-openapi-derived.yml#getSalesOrderById
+    consequence: read
+  - name: create_sales_order
+    description: Create a sales order for a new or existing customer, with products and payment terms.
+    source_operation: openapi/websitepros-international-platform-openapi-derived.yml#createSalesOrder
+    consequence: write
+    caution: >-
+      Not idempotent. Web.com publishes no Idempotency-Key support, so a retried call is a second
+      order.
+  - name: update_sales_order
+    description: Replace the values of an existing sales order; omitted properties retain their original values.
+    source_operation: openapi/websitepros-international-platform-openapi-derived.yml#updateSalesOrder
+    consequence: write
+  - name: delete_sales_order
+    description: Delete a sales order by its id.
+    source_operation: openapi/websitepros-international-platform-openapi-derived.yml#deleteSalesOrder
+    consequence: destructive
+  - name: create_service_orders
+    description: Provision one or more products/services against a customer and account.
+    source_operation: openapi/websitepros-international-platform-openapi-derived.yml#createServiceOrders
+    consequence: write
+    caution: >-
+      The base URL for this operation is an unpublished collection variable; api.nts.web.com/service-orders-v2
+      returned 404 on probe.
+  - name: get_customer_sso_url
+    description: Generate a single-sign-on URL for a customer owned by your tenant.
+    source_operation: openapi/websitepros-international-platform-openapi-derived.yml#getCustomerSsoUrl
+    consequence: sensitive
+    caution: >-
+      Returns a credential-bearing URL that grants access to a customer's account. Any real MCP
+      exposure of this operation needs human escalation, not autonomous agent use.
+  - name: healthcheck
+    description: Verify the API is reachable.
+    source_operation: openapi/websitepros-international-platform-openapi-derived.yml#getHealthcheck
+    consequence: read
+blockers:
+  - >-
+    Every tool would need three credentials on every call — an Azure API Management subscription
+    key, an Entra ID client-credentials bearer token, and a tenant identifier whose header name
+    changes depending on which product is being called.
+  - >-
+    Access is granted only after manual review by the Web.com International team, per environment,
+    so no agent can self-onboard.
+  - >-
+    No response schema is published for any operation, so a tool's output contract would be
+    unknown until a credentialed call is made.

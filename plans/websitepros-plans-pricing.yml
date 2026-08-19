@@ -1,0 +1,24 @@
+generated: '2026-08-13'
+method: probed
+source: >-
+  https://nts.developer.azure-api.net/products (200), https://api-docs.intl.web.com/ (200),
+  https://www.web.com/ (403 Cloudflare bot challenge)
+plan_count: 0
+plans: []
+model: request-access
+note: >-
+  Web.com publishes no pricing for the International Platform API. Access is granted by application
+  and manual review — "upon final review by the Web.com International team your account will be
+  granted access to our API" — with no price, tier, quota or overage stated anywhere in the
+  documentation. The Azure API Management developer portal's Products page loads (HTTP 200) but
+  lists nothing to an anonymous caller, so even the product names are not public.
+evidence:
+  - {url: 'https://api-docs.intl.web.com/', http_status: 200, finding: 'Getting Started covers access, endpoints and auth; no pricing.'}
+  - {url: 'https://nts.developer.azure-api.net/products', http_status: 200, finding: 'Products list page renders but is empty for anonymous visitors.'}
+  - {url: 'https://nts.developer.azure-api.net/developer/apis?api-version=2022-04-01-preview', http_status: 200, finding: '{"value":[],"nextLink":null}'}
+  - {url: 'https://www.web.com/', http_status: 403, finding: 'Cloudflare bot challenge (cf-mitigated: challenge) on every path, so retail Web.com product pricing could not be read either.'}
+caveat: >-
+  This zero covers the API. Web.com does publish retail pricing for its consumer website-builder,
+  hosting and domain products on www.web.com, but that site answers HTTP 403 to every anonymous
+  request behind a Cloudflare bot challenge, so no retail tier was read and none is recorded here
+  rather than guessed.
