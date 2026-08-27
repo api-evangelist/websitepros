@@ -55,36 +55,146 @@ tags:
 - Single Sign-On
 - Azure API Management
 apis:
-- aid: websitepros:international-platform
-  name: Web.com International Platform API
-  description: >-
-    The partner-facing API for Web.com's International ("NTS") platform, fronted by Azure API
-    Management. Ten documented operations cover the sales-order lifecycle (create, list with paging
-    and filtering, read, merge-update, delete), service-order provisioning of products and their
-    product-specific service configurations, domain availability checking and name suggestion, a
-    customer single-sign-on URL generator, and a healthcheck. Every request carries three
-    credentials together — an Azure API Management subscription key, a Microsoft Entra ID
-    client-credentials bearer token, and a tenant identifier. Production and development are
-    separate gateways with separate registrations and separate keys. Web.com publishes no OpenAPI;
-    its published machine-readable contract is the public Postman collection saved verbatim in this
-    repository.
+- aid: websitepros:websitepros-domains-api
+  name: WebsitePros Domains API
+  description: Domain-name availability and suggestion.
+  humanURL: https://api-docs.intl.web.com/
+  baseURL: https://api.nts.web.com
+  tags:
+  - Domains
+  properties:
+  - type: OpenAPI
+    url: openapi/websitepros-domains-api-openapi.yml
+  - type: PostmanCollection
+    url: collections/websitepros-international-platform.postman_collection.json
+  - type: Documentation
+    url: https://api-docs.intl.web.com/
+  - type: APIReference
+    url: https://api-docs.intl.web.com/
+  - type: GettingStarted
+    url: https://api-docs.intl.web.com/#getting-started
+  - type: DeveloperPortal
+    url: https://nts.developer.azure-api.net
+  - type: SignUp
+    url: https://nts.developer.azure-api.net/signup
+  - type: Authentication
+    url: authentication/websitepros-authentication.yml
+  - type: ErrorCatalog
+    url: errors/websitepros-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/websitepros-rate-limits.yml
+  - type: Plans
+    url: plans/websitepros-plans-pricing.yml
+  - type: Sandbox
+    url: sandbox/websitepros-sandbox.yml
+- aid: websitepros:websitepros-health-api
+  name: WebsitePros Health API
+  description: Gateway and service liveness.
+  humanURL: https://api-docs.intl.web.com/
+  baseURL: https://api.nts.web.com
+  tags:
+  - Health
+  properties:
+  - type: OpenAPI
+    url: openapi/websitepros-health-api-openapi.yml
+  - type: PostmanCollection
+    url: collections/websitepros-international-platform.postman_collection.json
+  - type: Documentation
+    url: https://api-docs.intl.web.com/
+  - type: APIReference
+    url: https://api-docs.intl.web.com/
+  - type: GettingStarted
+    url: https://api-docs.intl.web.com/#getting-started
+  - type: DeveloperPortal
+    url: https://nts.developer.azure-api.net
+  - type: SignUp
+    url: https://nts.developer.azure-api.net/signup
+  - type: Authentication
+    url: authentication/websitepros-authentication.yml
+  - type: ErrorCatalog
+    url: errors/websitepros-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/websitepros-rate-limits.yml
+  - type: Plans
+    url: plans/websitepros-plans-pricing.yml
+  - type: Sandbox
+    url: sandbox/websitepros-sandbox.yml
+- aid: websitepros:websitepros-sales-orders-api
+  name: WebsitePros Sales Orders API
+  description: Create, read, update and delete sales orders in the Web.com International pipeline.
   humanURL: https://api-docs.intl.web.com/
   baseURL: https://api.nts.web.com
   tags:
   - Sales Orders
-  - Provisioning
-  - Domains
-  - Single Sign-On
-  - Reseller
   properties:
   - type: OpenAPI
-    url: openapi/websitepros-international-platform-openapi-derived.yml
-    name: OpenAPI 3.1 derived by API Evangelist — not published by Web.com
+    url: openapi/websitepros-sales-orders-api-openapi.yml
   - type: PostmanCollection
     url: collections/websitepros-international-platform.postman_collection.json
-    name: International Platform Documentation — published by Web.com, saved verbatim
-  - type: Overlay
-    url: overlays/websitepros-international-platform-overlay.yaml
+  - type: Documentation
+    url: https://api-docs.intl.web.com/
+  - type: APIReference
+    url: https://api-docs.intl.web.com/
+  - type: GettingStarted
+    url: https://api-docs.intl.web.com/#getting-started
+  - type: DeveloperPortal
+    url: https://nts.developer.azure-api.net
+  - type: SignUp
+    url: https://nts.developer.azure-api.net/signup
+  - type: Authentication
+    url: authentication/websitepros-authentication.yml
+  - type: ErrorCatalog
+    url: errors/websitepros-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/websitepros-rate-limits.yml
+  - type: Plans
+    url: plans/websitepros-plans-pricing.yml
+  - type: Sandbox
+    url: sandbox/websitepros-sandbox.yml
+- aid: websitepros:websitepros-service-orders-api
+  name: WebsitePros Service Orders API
+  description: Provision products and services against a customer and account.
+  humanURL: https://api-docs.intl.web.com/
+  baseURL: https://api.nts.web.com
+  tags:
+  - Service Orders
+  properties:
+  - type: OpenAPI
+    url: openapi/websitepros-service-orders-api-openapi.yml
+  - type: PostmanCollection
+    url: collections/websitepros-international-platform.postman_collection.json
+  - type: Documentation
+    url: https://api-docs.intl.web.com/
+  - type: APIReference
+    url: https://api-docs.intl.web.com/
+  - type: GettingStarted
+    url: https://api-docs.intl.web.com/#getting-started
+  - type: DeveloperPortal
+    url: https://nts.developer.azure-api.net
+  - type: SignUp
+    url: https://nts.developer.azure-api.net/signup
+  - type: Authentication
+    url: authentication/websitepros-authentication.yml
+  - type: ErrorCatalog
+    url: errors/websitepros-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/websitepros-rate-limits.yml
+  - type: Plans
+    url: plans/websitepros-plans-pricing.yml
+  - type: Sandbox
+    url: sandbox/websitepros-sandbox.yml
+- aid: websitepros:websitepros-sso-api
+  name: WebsitePros SSO API
+  description: Generate a single-sign-on URL for a customer owned by your tenant.
+  humanURL: https://api-docs.intl.web.com/
+  baseURL: https://api.nts.web.com
+  tags:
+  - SSO
+  properties:
+  - type: OpenAPI
+    url: openapi/websitepros-sso-api-openapi.yml
+  - type: PostmanCollection
+    url: collections/websitepros-international-platform.postman_collection.json
   - type: Documentation
     url: https://api-docs.intl.web.com/
   - type: APIReference
