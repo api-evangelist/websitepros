@@ -1,0 +1,126 @@
+openapi: 3.2.0
+info:
+  title: Web.com International Platform Health API
+  version: '2026-08-13'
+  summary: Derived OpenAPI 3.1 description of the Web.com International ("NTS") Platform API fronted by Azure API Management at https://api.nts.web.com.
+  description: 'DERIVED, NOT HARVESTED. Web.com publishes NO OpenAPI for this API. The only machine-readable contract Web.com publishes for it is a public Postman collection, served from its own domain at https://api-docs.intl.web.com/ ("International Platform Documentation", collection id 49385bb1-0783-41dd-bc38-a7b9b2ace81d), saved verbatim in this repository at collections/websitepros-international-platform.postman_collection.json.
+
+
+    Every path, method, header, query parameter and request example below is taken literally from that published collection, or from an HTTP response observed live against api.nts.web.com on 2026-08-13 and recorded in x-evidence. No response schema is invented: the only response bodies described here are the Azure API Management error envelopes that were actually returned on anonymous probes. Success (2xx) bodies are described by status and content type only, because Web.com does not publish them and the live surface is gated behind a subscription key that is granted only after a manual access review.
+
+
+    OWNERSHIP. This contract belongs to Web.com. The documentation is served from api-docs.intl.web.com (a web.com subdomain), the production and development gateways are api.nts.web.com and api-dev.nts.web.com (web.com subdomains), the developer portal at ntsdev.developer.azure-api.net is titled "Web.com International API", the OAuth2 audience is api://intl.web.com, and the published getting-started text says access is "granted upon final review by the Web.com International team".
+
+
+    ACCESS. Two separate environments, each requiring its own registration and approval: production (portal https://nts.developer.azure-api.net, gateway https://api.nts.web.com) and development (portal https://ntsdev.developer.azure-api.net, gateway https://api-dev.nts.web.com). Every request carries an Azure API Management subscription key in Ocp-Apim-Subscription-Key, a bearer token obtained by client-credentials from the Web.com Microsoft Entra ID tenant, and a tenant identifier — x-nts-tenant-id on the sales-order operations, tenant-name on the domain, SSO and service-order operations.'
+  contact:
+    name: Web.com International Platform Documentation
+    url: https://api-docs.intl.web.com/
+  x-derived-by: API Evangelist
+  x-derived-from:
+  - https://api-docs.intl.web.com/
+  - collections/websitepros-international-platform.postman_collection.json
+  x-evidence:
+    fetched: '2026-08-13'
+    documentation_url: https://api-docs.intl.web.com/
+    documentation_status: 200
+    collection_url: https://api-docs.intl.web.com/api/collections/321243/T1DwdZvr?segregateAuth=true&versionTag=latest
+    collection_status: 200
+    gateway_probe: https://api.nts.web.com/sales-orders/v1
+    gateway_status: 401
+    gateway_www_authenticate: AzureApiManagementKey realm="https://api.nts.web.com/sales-orders",name="Ocp-Apim-Subscription-Key",type="header"
+servers:
+- url: https://api.nts.web.com
+  description: Production gateway (Azure API Management, nts.azure-api.net)
+- url: https://api-dev.nts.web.com
+  description: Development gateway; separate registration and separate subscription key required
+tags:
+- name: Health
+  description: Gateway and service liveness.
+paths:
+  /healthcheck:
+    get:
+      tags:
+      - Health
+      operationId: getHealthcheck
+      summary: Healthcheck
+      description: Sends a healthcheck request to see if the sales order api is currently running. This is a simple request that just verifies that the api is up. It does not verify that all dependant systems are reachable. (Description verbatim from the published Postman collection.)
+      security:
+      - subscriptionKey: []
+      x-evidence:
+        probed: '2026-08-13'
+        production:
+          url: https://api.nts.web.com/healthcheck
+          status: 404
+        development:
+          url: https://api-dev.nts.web.com/healthcheck
+          status: 401
+        note: Documented for both environments, but only the development gateway answered with an authentication challenge; the production gateway returned the Azure API Management "Resource not found" envelope, so the route may not be published on production.
+      responses:
+        '200':
+          description: The API is running. Web.com does not publish the response body.
+        '401':
+          $ref: '#/components/responses/AccessDenied'
+        '404':
+          $ref: '#/components/responses/ResourceNotFound'
+components:
+  schemas:
+    GatewayError:
+      type: object
+      description: The Azure API Management error envelope actually returned by api.nts.web.com. Not RFC 9457 problem+json — the content type is application/json.
+      properties:
+        statusCode:
+          type: integer
+        message:
+          type: string
+  responses:
+    AccessDenied:
+      description: Missing or invalid Azure API Management subscription key. Observed live on 2026-08-13.
+      headers:
+        WWW-Authenticate:
+          description: Azure API Management key challenge naming the realm and header.
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GatewayError'
+          example:
+            statusCode: 401
+            message: Access denied due to missing subscription key. Make sure to include subscription key when making requests to an API.
+    ResourceNotFound:
+      description: No route matched at the gateway. Observed live on 2026-08-13.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GatewayError'
+          example:
+            statusCode: 404
+            message: Resource not found
+  securitySchemes:
+    subscriptionKey:
+      type: apiKey
+      in: header
+      name: Ocp-Apim-Subscription-Key
+      description: Your api access key from the developer portal that identifies your subscription to the api. Issued per environment after Web.com International approves your registration.
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: This is your auth token that you would receive from the Authorization call — an access token issued by the Web.com Microsoft Entra ID tenant via the client-credentials grant (see the oauth2ClientCredentials scheme).
+    tenantId:
+      type: apiKey
+      in: header
+      name: x-nts-tenant-id
+      description: This is your company's unique identifier, provided by Web.com when your subscription is activated. Required on the sales-order operations.
+    tenantName:
+      type: apiKey
+      in: header
+      name: tenant-name
+      description: Your tenant's name. Required on the domain, SSO and service-order operations, where it is used in place of x-nts-tenant-id.
+    oauth2ClientCredentials:
+      type: oauth2
+      description: Microsoft Entra ID (Azure AD) v1 token endpoint for the Web.com International tenant 03fbebc8-de8a-4428-b573-4c4903610dac. The published collection sends grant_type, client_id, client_secret and resource=api://intl.web.com as an application/x-www-form-urlencoded body. Web.com publishes no scope list; the v1 endpoint takes a `resource` audience instead of scopes.
+      flows:
+        clientCredentials:
+          tokenUrl: https://login.microsoftonline.com/03fbebc8-de8a-4428-b573-4c4903610dac/oauth2/token
+          scopes: {}

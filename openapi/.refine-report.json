@@ -1,0 +1,23 @@
+{
+  "provider": "websitepros",
+  "sources": [
+    "websitepros-international-platform-openapi-derived.yml"
+  ],
+  "outputs": [
+    "websitepros-domains-api-openapi.yml",
+    "websitepros-health-api-openapi.yml",
+    "websitepros-sso-api-openapi.yml",
+    "websitepros-sales-orders-api-openapi.yml",
+    "websitepros-service-orders-api-openapi.yml"
+  ],
+  "archived": [
+    "archived openapi/websitepros-international-platform-openapi-derived.yml"
+  ],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "websitepros-international-platform-openapi-derived.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "apis.yml register: written (+5 apis, 5 total)"
+  ],
+  "skipped": []
+}
