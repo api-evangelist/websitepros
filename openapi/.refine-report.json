@@ -1,7 +1,7 @@
 {
   "provider": "websitepros",
   "sources": [
-    "websitepros-international-platform-openapi-derived.yml"
+    "_ae-authored/websitepros-international-platform-openapi-derived.yml"
   ],
   "outputs": [
     "websitepros-domains-api-openapi.yml",
@@ -10,14 +10,19 @@
     "websitepros-sales-orders-api-openapi.yml",
     "websitepros-service-orders-api-openapi.yml"
   ],
-  "archived": [
-    "archived openapi/websitepros-international-platform-openapi-derived.yml"
-  ],
+  "archived": [],
   "errors": [],
   "warnings": [],
   "notes": [
+    "sourced from openapi/_original/ (0 archived document(s)); previously refined output at the top level was skipped rather than re-split",
     "websitepros-international-platform-openapi-derived.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
-    "apis.yml register: written (+5 apis, 5 total)"
+    "apis.yml register: already-registered"
   ],
-  "skipped": []
+  "skipped": [
+    "websitepros-domains-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "websitepros-health-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "websitepros-sales-orders-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "websitepros-service-orders-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "websitepros-sso-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }
