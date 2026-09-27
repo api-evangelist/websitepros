@@ -55,15 +55,6 @@ paths:
         '404':
           $ref: '#/components/responses/ResourceNotFound'
 components:
-  schemas:
-    GatewayError:
-      type: object
-      description: The Azure API Management error envelope actually returned by api.nts.web.com. Not RFC 9457 problem+json — the content type is application/json.
-      properties:
-        statusCode:
-          type: integer
-        message:
-          type: string
   responses:
     ResourceNotFound:
       description: No route matched at the gateway. Observed live on 2026-08-13.
@@ -88,6 +79,15 @@ components:
           example:
             statusCode: 401
             message: Access denied due to missing subscription key. Make sure to include subscription key when making requests to an API.
+  schemas:
+    GatewayError:
+      type: object
+      description: The Azure API Management error envelope actually returned by api.nts.web.com. Not RFC 9457 problem+json — the content type is application/json.
+      properties:
+        statusCode:
+          type: integer
+        message:
+          type: string
   securitySchemes:
     subscriptionKey:
       type: apiKey

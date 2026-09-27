@@ -256,22 +256,103 @@ paths:
         '401':
           $ref: '#/components/responses/AccessDenied'
 components:
-  responses:
-    AccessDenied:
-      description: Missing or invalid Azure API Management subscription key. Observed live on 2026-08-13.
-      headers:
-        WWW-Authenticate:
-          description: Azure API Management key challenge naming the realm and header.
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GatewayError'
-          example:
-            statusCode: 401
-            message: Access denied due to missing subscription key. Make sure to include subscription key when making requests to an API.
   schemas:
+    SalesOrderStatus:
+      type: object
+      properties:
+        pipelinePhase:
+          type: string
+          description: 'Value seen in the published examples: Sales Lead.'
+        salesPartner:
+          type: string
+        salesRep:
+          type: string
+    SalesOrderEnvelope:
+      type: object
+      properties:
+        traceId:
+          type: string
+          description: Caller-supplied correlation identifier.
+        salesOrder:
+          $ref: '#/components/schemas/SalesOrder'
+    Contact:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        phoneNumber:
+          type: string
+        languageCode:
+          type: string
+        address1:
+          type: string
+        address2:
+          type: string
+        city:
+          type: string
+        stateOrProvince:
+          type: string
+        postalCode:
+          type: string
+        countryCode:
+          type: string
+        isInvoiceRecipient:
+          type: boolean
+        roles:
+          type: array
+          description: Values seen in the published examples — Owner, Marketing, Finance, Legal, Accounting, General Manager. Web.com does not publish the closed enumeration.
+          items:
+            type: string
+    Product:
+      type: object
+      description: 'NOTE: the published create example names the quantity field `quantity` while the published update example names it `qty`. Both are recorded here because Web.com publishes both; a client cannot tell from the documentation which the API accepts on which operation.'
+      properties:
+        name:
+          type: string
+        quantity:
+          type: integer
+        qty:
+          type: integer
+        discountPercent:
+          type: number
+        autoRenewServiceAgreement:
+          type: boolean
+        serviceAgreementLength:
+          type: integer
+        serviceAgreementUnit:
+          type: string
+          description: 'Value seen in the published examples: Month.'
+    PaymentSummary:
+      type: object
+      properties:
+        currencyCode:
+          type: string
+        invoiceDeliveryMethod:
+          type: string
+        paymentTerms:
+          type: string
+        paymentType:
+          type: string
+    Note:
+      type: object
+      properties:
+        body:
+          type: string
+        createdByUsername:
+          type: string
+    GatewayError:
+      type: object
+      description: The Azure API Management error envelope actually returned by api.nts.web.com. Not RFC 9457 problem+json — the content type is application/json.
+      properties:
+        statusCode:
+          type: integer
+        message:
+          type: string
     Customer:
       type: object
       properties:
@@ -310,33 +391,6 @@ components:
           type: string
         countryCode:
           type: string
-    Product:
-      type: object
-      description: 'NOTE: the published create example names the quantity field `quantity` while the published update example names it `qty`. Both are recorded here because Web.com publishes both; a client cannot tell from the documentation which the API accepts on which operation.'
-      properties:
-        name:
-          type: string
-        quantity:
-          type: integer
-        qty:
-          type: integer
-        discountPercent:
-          type: number
-        autoRenewServiceAgreement:
-          type: boolean
-        serviceAgreementLength:
-          type: integer
-        serviceAgreementUnit:
-          type: string
-          description: 'Value seen in the published examples: Month.'
-    SalesOrderEnvelope:
-      type: object
-      properties:
-        traceId:
-          type: string
-          description: Caller-supplied correlation identifier.
-        salesOrder:
-          $ref: '#/components/schemas/SalesOrder'
     SalesOrder:
       type: object
       properties:
@@ -360,58 +414,6 @@ components:
             $ref: '#/components/schemas/Product'
         status:
           $ref: '#/components/schemas/SalesOrderStatus'
-    PaymentSummary:
-      type: object
-      properties:
-        currencyCode:
-          type: string
-        invoiceDeliveryMethod:
-          type: string
-        paymentTerms:
-          type: string
-        paymentType:
-          type: string
-    GatewayError:
-      type: object
-      description: The Azure API Management error envelope actually returned by api.nts.web.com. Not RFC 9457 problem+json — the content type is application/json.
-      properties:
-        statusCode:
-          type: integer
-        message:
-          type: string
-    Contact:
-      type: object
-      properties:
-        firstName:
-          type: string
-        lastName:
-          type: string
-        email:
-          type: string
-          format: email
-        phoneNumber:
-          type: string
-        languageCode:
-          type: string
-        address1:
-          type: string
-        address2:
-          type: string
-        city:
-          type: string
-        stateOrProvince:
-          type: string
-        postalCode:
-          type: string
-        countryCode:
-          type: string
-        isInvoiceRecipient:
-          type: boolean
-        roles:
-          type: array
-          description: Values seen in the published examples — Owner, Marketing, Finance, Legal, Accounting, General Manager. Web.com does not publish the closed enumeration.
-          items:
-            type: string
     Account:
       type: object
       properties:
@@ -420,23 +422,21 @@ components:
           description: Empty string when a new account should be created.
         name:
           type: string
-    SalesOrderStatus:
-      type: object
-      properties:
-        pipelinePhase:
-          type: string
-          description: 'Value seen in the published examples: Sales Lead.'
-        salesPartner:
-          type: string
-        salesRep:
-          type: string
-    Note:
-      type: object
-      properties:
-        body:
-          type: string
-        createdByUsername:
-          type: string
+  responses:
+    AccessDenied:
+      description: Missing or invalid Azure API Management subscription key. Observed live on 2026-08-13.
+      headers:
+        WWW-Authenticate:
+          description: Azure API Management key challenge naming the realm and header.
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GatewayError'
+          example:
+            statusCode: 401
+            message: Access denied due to missing subscription key. Make sure to include subscription key when making requests to an API.
   securitySchemes:
     subscriptionKey:
       type: apiKey

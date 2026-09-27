@@ -63,6 +63,15 @@ paths:
           $ref: '#/components/responses/ResourceNotFound'
 components:
   responses:
+    ResourceNotFound:
+      description: No route matched at the gateway. Observed live on 2026-08-13.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GatewayError'
+          example:
+            statusCode: 404
+            message: Resource not found
     AccessDenied:
       description: Missing or invalid Azure API Management subscription key. Observed live on 2026-08-13.
       headers:
@@ -77,53 +86,7 @@ components:
           example:
             statusCode: 401
             message: Access denied due to missing subscription key. Make sure to include subscription key when making requests to an API.
-    ResourceNotFound:
-      description: No route matched at the gateway. Observed live on 2026-08-13.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GatewayError'
-          example:
-            statusCode: 404
-            message: Resource not found
   schemas:
-    ServiceOrder:
-      type: object
-      description: One element of the service-order array. Provide either `customer` (new customer) or `customerId` (existing), and either `account` (new account) or `accountId` (existing).
-      properties:
-        customer:
-          $ref: '#/components/schemas/ServiceOrderCustomer'
-        customerId:
-          type: string
-        account:
-          $ref: '#/components/schemas/Account'
-        accountId:
-          type: string
-        actions:
-          type: array
-          items:
-            $ref: '#/components/schemas/ServiceOrderAction'
-    ServiceOrderAction:
-      type: object
-      properties:
-        action:
-          type: string
-          description: 'Value seen in the published examples: create.'
-        product:
-          type: string
-          description: 'Value seen in the published examples: EKCSTest.'
-        services:
-          type: object
-          description: Product-specific service map. Keys seen in the published examples are `EkcsAd` (an advertising placement, with ad unit, impressions, inventory size, position, template, rate, start/end date and trafficking weight) and `ListingManagement` (business information, address, categories). The published examples annotate several EkcsAd fields inline as required — CustomerEmail, CustomerName, CustomerPhone and EndDate. The full shapes are reproduced verbatim in collections/websitepros-international-platform.postman_collection.json; they are not re-typed here because Web.com publishes no schema for them.
-          additionalProperties: true
-    GatewayError:
-      type: object
-      description: The Azure API Management error envelope actually returned by api.nts.web.com. Not RFC 9457 problem+json — the content type is application/json.
-      properties:
-        statusCode:
-          type: integer
-        message:
-          type: string
     ServiceOrderCustomer:
       type: object
       description: The service-order customer shape adds credentials for the account manager that the sales-order customer shape does not carry.
@@ -150,6 +113,43 @@ components:
         accountManagerPassword:
           type: string
           format: password
+    ServiceOrderAction:
+      type: object
+      properties:
+        action:
+          type: string
+          description: 'Value seen in the published examples: create.'
+        product:
+          type: string
+          description: 'Value seen in the published examples: EKCSTest.'
+        services:
+          type: object
+          description: Product-specific service map. Keys seen in the published examples are `EkcsAd` (an advertising placement, with ad unit, impressions, inventory size, position, template, rate, start/end date and trafficking weight) and `ListingManagement` (business information, address, categories). The published examples annotate several EkcsAd fields inline as required — CustomerEmail, CustomerName, CustomerPhone and EndDate. The full shapes are reproduced verbatim in collections/websitepros-international-platform.postman_collection.json; they are not re-typed here because Web.com publishes no schema for them.
+          additionalProperties: true
+    GatewayError:
+      type: object
+      description: The Azure API Management error envelope actually returned by api.nts.web.com. Not RFC 9457 problem+json — the content type is application/json.
+      properties:
+        statusCode:
+          type: integer
+        message:
+          type: string
+    ServiceOrder:
+      type: object
+      description: One element of the service-order array. Provide either `customer` (new customer) or `customerId` (existing), and either `account` (new account) or `accountId` (existing).
+      properties:
+        customer:
+          $ref: '#/components/schemas/ServiceOrderCustomer'
+        customerId:
+          type: string
+        account:
+          $ref: '#/components/schemas/Account'
+        accountId:
+          type: string
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceOrderAction'
     Account:
       type: object
       properties:

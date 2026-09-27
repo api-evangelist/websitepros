@@ -93,14 +93,6 @@ paths:
           $ref: '#/components/responses/AccessDenied'
 components:
   schemas:
-    GatewayError:
-      type: object
-      description: The Azure API Management error envelope actually returned by api.nts.web.com. Not RFC 9457 problem+json — the content type is application/json.
-      properties:
-        statusCode:
-          type: integer
-        message:
-          type: string
     DomainSpinRequest:
       type: object
       properties:
@@ -112,6 +104,14 @@ components:
           description: TLDs to test.
           items:
             type: string
+    GatewayError:
+      type: object
+      description: The Azure API Management error envelope actually returned by api.nts.web.com. Not RFC 9457 problem+json — the content type is application/json.
+      properties:
+        statusCode:
+          type: integer
+        message:
+          type: string
   responses:
     AccessDenied:
       description: Missing or invalid Azure API Management subscription key. Observed live on 2026-08-13.
