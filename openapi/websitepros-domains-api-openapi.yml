@@ -92,6 +92,21 @@ paths:
         '401':
           $ref: '#/components/responses/AccessDenied'
 components:
+  responses:
+    AccessDenied:
+      description: Missing or invalid Azure API Management subscription key. Observed live on 2026-08-13.
+      headers:
+        WWW-Authenticate:
+          description: Azure API Management key challenge naming the realm and header.
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GatewayError'
+          example:
+            statusCode: 401
+            message: Access denied due to missing subscription key. Make sure to include subscription key when making requests to an API.
   schemas:
     DomainSpinRequest:
       type: object
@@ -112,21 +127,6 @@ components:
           type: integer
         message:
           type: string
-  responses:
-    AccessDenied:
-      description: Missing or invalid Azure API Management subscription key. Observed live on 2026-08-13.
-      headers:
-        WWW-Authenticate:
-          description: Azure API Management key challenge naming the realm and header.
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GatewayError'
-          example:
-            statusCode: 401
-            message: Access denied due to missing subscription key. Make sure to include subscription key when making requests to an API.
   securitySchemes:
     subscriptionKey:
       type: apiKey
