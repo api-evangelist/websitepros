@@ -1,21 +1,19 @@
-# Kin Score artifact — websitepros — 2026-08-24T171257
+# Kin Score artifact — websitepros — 2026-09-23T000603
 # The API Evangelist rating (https://github.com/api-evangelist/kin-score). Generated; do not edit.
 ---
 kin_score:
   slug: websitepros
-  schema_version: 0.13.0
-  scored_at: '2026-08-24'
-  run_ts: 2026-08-24T171257
-  composite: 29.4
-  band: thin
+  schema_version: 0.22.0
+  scored_at: '2026-09-23'
+  run_ts: 2026-09-23T000603
+  composite: 25.6
+  band: emerging
   facets:
-    discoverability: 75.9
-    contract_quality: 17.8
-    governance: 16.7
+    discoverability: 74.1
+    contract_quality: 16.7
+    contract_governance: 4.5
     operational_transparency: 0.0
-    developer_ergonomics: 63.7
-    commercial_clarity: 13.2
-    contract_governance: 16.7
+    developer_ergonomics: 57.7
     access_clarity: 13.2
   agent_readiness:
     score: 24.3
@@ -45,7 +43,7 @@ kin_score:
     skills: derived
     conformance: derived
     contracts:
-      total: 1
-      derived: 1
+      total: 6
+      derived: 6
       coverage: 100.0
       callable: 100.0
