@@ -56,6 +56,15 @@ paths:
           $ref: '#/components/responses/ResourceNotFound'
 components:
   responses:
+    ResourceNotFound:
+      description: No route matched at the gateway. Observed live on 2026-08-13.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GatewayError'
+          example:
+            statusCode: 404
+            message: Resource not found
     AccessDenied:
       description: Missing or invalid Azure API Management subscription key. Observed live on 2026-08-13.
       headers:
@@ -70,15 +79,6 @@ components:
           example:
             statusCode: 401
             message: Access denied due to missing subscription key. Make sure to include subscription key when making requests to an API.
-    ResourceNotFound:
-      description: No route matched at the gateway. Observed live on 2026-08-13.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GatewayError'
-          example:
-            statusCode: 404
-            message: Resource not found
   schemas:
     GatewayError:
       type: object
