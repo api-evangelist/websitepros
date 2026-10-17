@@ -58,6 +58,15 @@ paths:
         '401':
           $ref: '#/components/responses/AccessDenied'
 components:
+  schemas:
+    GatewayError:
+      type: object
+      description: The Azure API Management error envelope actually returned by api.nts.web.com. Not RFC 9457 problem+json — the content type is application/json.
+      properties:
+        statusCode:
+          type: integer
+        message:
+          type: string
   responses:
     AccessDenied:
       description: Missing or invalid Azure API Management subscription key. Observed live on 2026-08-13.
@@ -73,15 +82,6 @@ components:
           example:
             statusCode: 401
             message: Access denied due to missing subscription key. Make sure to include subscription key when making requests to an API.
-  schemas:
-    GatewayError:
-      type: object
-      description: The Azure API Management error envelope actually returned by api.nts.web.com. Not RFC 9457 problem+json — the content type is application/json.
-      properties:
-        statusCode:
-          type: integer
-        message:
-          type: string
   securitySchemes:
     subscriptionKey:
       type: apiKey

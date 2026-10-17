@@ -257,36 +257,28 @@ paths:
           $ref: '#/components/responses/AccessDenied'
 components:
   schemas:
-    SalesOrder:
+    Note:
       type: object
       properties:
-        account:
-          $ref: '#/components/schemas/Account'
-        contacts:
-          type: array
-          items:
-            $ref: '#/components/schemas/Contact'
-        customer:
-          $ref: '#/components/schemas/Customer'
-        notes:
-          type: array
-          items:
-            $ref: '#/components/schemas/Note'
-        paymentSummary:
-          $ref: '#/components/schemas/PaymentSummary'
-        products:
-          type: array
-          items:
-            $ref: '#/components/schemas/Product'
-        status:
-          $ref: '#/components/schemas/SalesOrderStatus'
-    Account:
-      type: object
-      properties:
-        id:
+        body:
           type: string
-          description: Empty string when a new account should be created.
-        name:
+        createdByUsername:
+          type: string
+    SalesOrderEnvelope:
+      type: object
+      properties:
+        traceId:
+          type: string
+          description: Caller-supplied correlation identifier.
+        salesOrder:
+          $ref: '#/components/schemas/SalesOrder'
+    GatewayError:
+      type: object
+      description: The Azure API Management error envelope actually returned by api.nts.web.com. Not RFC 9457 problem+json — the content type is application/json.
+      properties:
+        statusCode:
+          type: integer
+        message:
           type: string
     PaymentSummary:
       type: object
@@ -299,72 +291,23 @@ components:
           type: string
         paymentType:
           type: string
-    Contact:
+    SalesOrderStatus:
       type: object
       properties:
-        firstName:
+        pipelinePhase:
           type: string
-        lastName:
+          description: 'Value seen in the published examples: Sales Lead.'
+        salesPartner:
           type: string
-        email:
+        salesRep:
           type: string
-          format: email
-        phoneNumber:
-          type: string
-        languageCode:
-          type: string
-        address1:
-          type: string
-        address2:
-          type: string
-        city:
-          type: string
-        stateOrProvince:
-          type: string
-        postalCode:
-          type: string
-        countryCode:
-          type: string
-        isInvoiceRecipient:
-          type: boolean
-        roles:
-          type: array
-          description: Values seen in the published examples — Owner, Marketing, Finance, Legal, Accounting, General Manager. Web.com does not publish the closed enumeration.
-          items:
-            type: string
-    GatewayError:
+    Account:
       type: object
-      description: The Azure API Management error envelope actually returned by api.nts.web.com. Not RFC 9457 problem+json — the content type is application/json.
       properties:
-        statusCode:
-          type: integer
-        message:
+        id:
           type: string
-    Product:
-      type: object
-      description: 'NOTE: the published create example names the quantity field `quantity` while the published update example names it `qty`. Both are recorded here because Web.com publishes both; a client cannot tell from the documentation which the API accepts on which operation.'
-      properties:
+          description: Empty string when a new account should be created.
         name:
-          type: string
-        quantity:
-          type: integer
-        qty:
-          type: integer
-        discountPercent:
-          type: number
-        autoRenewServiceAgreement:
-          type: boolean
-        serviceAgreementLength:
-          type: integer
-        serviceAgreementUnit:
-          type: string
-          description: 'Value seen in the published examples: Month.'
-    Note:
-      type: object
-      properties:
-        body:
-          type: string
-        createdByUsername:
           type: string
     Customer:
       type: object
@@ -404,24 +347,81 @@ components:
           type: string
         countryCode:
           type: string
-    SalesOrderStatus:
+    Product:
+      type: object
+      description: 'NOTE: the published create example names the quantity field `quantity` while the published update example names it `qty`. Both are recorded here because Web.com publishes both; a client cannot tell from the documentation which the API accepts on which operation.'
+      properties:
+        name:
+          type: string
+        quantity:
+          type: integer
+        qty:
+          type: integer
+        discountPercent:
+          type: number
+        autoRenewServiceAgreement:
+          type: boolean
+        serviceAgreementLength:
+          type: integer
+        serviceAgreementUnit:
+          type: string
+          description: 'Value seen in the published examples: Month.'
+    Contact:
       type: object
       properties:
-        pipelinePhase:
+        firstName:
           type: string
-          description: 'Value seen in the published examples: Sales Lead.'
-        salesPartner:
+        lastName:
           type: string
-        salesRep:
+        email:
           type: string
-    SalesOrderEnvelope:
+          format: email
+        phoneNumber:
+          type: string
+        languageCode:
+          type: string
+        address1:
+          type: string
+        address2:
+          type: string
+        city:
+          type: string
+        stateOrProvince:
+          type: string
+        postalCode:
+          type: string
+        countryCode:
+          type: string
+        isInvoiceRecipient:
+          type: boolean
+        roles:
+          type: array
+          description: Values seen in the published examples — Owner, Marketing, Finance, Legal, Accounting, General Manager. Web.com does not publish the closed enumeration.
+          items:
+            type: string
+    SalesOrder:
       type: object
       properties:
-        traceId:
-          type: string
-          description: Caller-supplied correlation identifier.
-        salesOrder:
-          $ref: '#/components/schemas/SalesOrder'
+        account:
+          $ref: '#/components/schemas/Account'
+        contacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Contact'
+        customer:
+          $ref: '#/components/schemas/Customer'
+        notes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Note'
+        paymentSummary:
+          $ref: '#/components/schemas/PaymentSummary'
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/Product'
+        status:
+          $ref: '#/components/schemas/SalesOrderStatus'
   responses:
     AccessDenied:
       description: Missing or invalid Azure API Management subscription key. Observed live on 2026-08-13.

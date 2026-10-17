@@ -63,30 +63,6 @@ paths:
           $ref: '#/components/responses/ResourceNotFound'
 components:
   schemas:
-    Account:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Empty string when a new account should be created.
-        name:
-          type: string
-    ServiceOrder:
-      type: object
-      description: One element of the service-order array. Provide either `customer` (new customer) or `customerId` (existing), and either `account` (new account) or `accountId` (existing).
-      properties:
-        customer:
-          $ref: '#/components/schemas/ServiceOrderCustomer'
-        customerId:
-          type: string
-        account:
-          $ref: '#/components/schemas/Account'
-        accountId:
-          type: string
-        actions:
-          type: array
-          items:
-            $ref: '#/components/schemas/ServiceOrderAction'
     GatewayError:
       type: object
       description: The Azure API Management error envelope actually returned by api.nts.web.com. Not RFC 9457 problem+json — the content type is application/json.
@@ -121,6 +97,30 @@ components:
         accountManagerPassword:
           type: string
           format: password
+    ServiceOrder:
+      type: object
+      description: One element of the service-order array. Provide either `customer` (new customer) or `customerId` (existing), and either `account` (new account) or `accountId` (existing).
+      properties:
+        customer:
+          $ref: '#/components/schemas/ServiceOrderCustomer'
+        customerId:
+          type: string
+        account:
+          $ref: '#/components/schemas/Account'
+        accountId:
+          type: string
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceOrderAction'
+    Account:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Empty string when a new account should be created.
+        name:
+          type: string
     ServiceOrderAction:
       type: object
       properties:
